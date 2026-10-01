@@ -1,46 +1,67 @@
 # Core Summary
 
-Core is the package's public surface. It owns the single entry point consumers import from and the
-`VERSION` constant. No media features exist yet, so Core is currently the whole library.
+Core is the framework-agnostic half of `@eliyce/media-pro`. It owns the observable
+`MediaLibrary` store behind every media component, the upload transport (direct and Vapor), client
+validation, Laravel error mapping, translations, and the package entry points. Core imports no
+React and touches no DOM API at module scope, so the React binding (and later Vue or Livewire
+bindings) reuse it unchanged.
 
 ## Features
 
-| Feature      | What it does                                                                                    | Docs                                                                                                  |
-| ------------ | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Public Entry | `src/index.ts`, the only module consumers can import (`media-pro`); re-exports the public API   | [business](../features/public-entry/business.md) · [technical](../features/public-entry/technical.md) |
-| Version Info | `VERSION`, a string constant equal to `package.json#version`, so callers can read it at runtime | [business](../features/version-info/business.md) · [technical](../features/version-info/technical.md) |
+| Feature               | What it does                                                                                  | Docs                                                                                                                                                                      |
+| --------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public Entry          | The `.` and `./core` entry points; `.` adds `VERSION` to the core API                         | [business](../features/public-entry/business.md) · [technical](../features/public-entry/technical.md) · [api](../features/public-entry/api.md)                            |
+| Version Info          | `VERSION`, a string constant equal to `package.json#version`                                  | [business](../features/version-info/business.md) · [technical](../features/version-info/technical.md) · [api](../features/version-info/api.md)                            |
+| Media Library Store   | `MediaLibrary`: state, add/replace/remove/reorder, form value, callbacks; `normalizeValue`    | [business](../features/media-library-store/business.md) · [technical](../features/media-library-store/technical.md) · [api](../features/media-library-store/api.md)       |
+| Upload Transport      | XHR upload with progress and abort, the Vapor three-step flow, CSRF headers, client uuids     | [business](../features/upload-transport/business.md) · [technical](../features/upload-transport/technical.md) · [api](../features/upload-transport/api.md)                |
+| Validation and Errors | `validateFile` (accept, min/max size) and `mapValidationErrors` (Laravel error bag to items)  | [business](../features/validation-and-errors/business.md) · [technical](../features/validation-and-errors/technical.md) · [api](../features/validation-and-errors/api.md) |
+| Translations          | `defaultTranslations` (Spatie keys), `resolveTranslations`, `translate` with `{placeholders}` | [business](../features/translations/business.md) · [technical](../features/translations/technical.md) · [api](../features/translations/api.md)                            |
 
 ## Source
 
-- `src/index.ts`
-- `src/version.ts`
+- `src/index.ts`, `src/version.ts`
+- `src/core/index.ts` (barrel), `types.ts`, `media-library.ts`, `value.ts`, `upload.ts`, `csrf.ts`,
+  `uuid.ts`, `validation.ts`, `errors.ts`, `translations.ts`
 
 ## Public Surface
 
-| Name                     | Kind                                                            |
-| ------------------------ | --------------------------------------------------------------- |
-| `VERSION`                | Named export (constant, `string`)                               |
-| `media-pro`              | `exports["."]` → `dist/index.js` (ESM) / `dist/index.cjs` (CJS) |
-| `media-pro/package.json` | `exports["./package.json"]`                                     |
+| Specifier                        | Exposes                          |
+| -------------------------------- | -------------------------------- |
+| `@eliyce/media-pro`              | `VERSION` plus every core export |
+| `@eliyce/media-pro/core`         | The core API (no `VERSION`)      |
+| `@eliyce/media-pro/package.json` | The manifest                     |
 
-Every other path (`media-pro/dist/...`, `media-pro/src/...`) is blocked by the `exports` map.
+Core exports `MediaLibrary`, `defaultTranslations`, `resolveTranslations`, `translate`,
+`normalizeValue`, `mapValidationErrors`, `validateFile`, `describeAccept`, `getCsrfHeaders`,
+`generateUuid`, and the types listed in the
+[API registry](../../../instructions/registries/api-registry.md). Deep imports
+(`@eliyce/media-pro/dist/...`) are blocked by the `exports` map.
 
 ## Dependencies
 
-- **Uses:** nothing. Core has no runtime dependencies and no I/O.
-- **Used by:** every future module. New features live in `src/<feature>/` and are re-exported
-  from `src/index.ts`, so they all pass through Public Entry.
+- **Uses:** nothing at runtime. Browser APIs (`XMLHttpRequest`, `FormData`, `URL.createObjectURL`,
+  `crypto`, `document.cookie`) are reached only inside methods and are guarded for server
+  rendering.
+- **Used by:** the [React module](../../react/index/summary.md), which imports `../core/index.js`.
+  The build rewrites that import so `dist/react.*` and `dist/index.*` share one `dist/core.*`.
+- **Talks to:** the [Laravel module](../../laravel/index/summary.md), over HTTP only (upload
+  endpoints, the media value and the error bag). The contract is in the
+  [architecture overview](../../../instructions/architecture/overview.md#js-to-laravel-contract).
 
 ## Tests
 
-- `tests/index.test.ts` imports through the public entry and checks that `VERSION` equals
-  `package.json#version`.
+- `tests/core/*.test.ts` (node environment, fake transport, no network): one file per unit.
+- `tests/index.test.ts`: `VERSION` sync; `.` and `./core` expose the same core objects; no
+  default export.
+- `tests/package-exports.test.ts`: builds the package, then checks the `exports` map, the
+  `"use client"` placement and that `dist/core.*` has no React import.
 
 ## Known Gaps
 
 - TD-8: `VERSION` must be bumped by hand after `changeset version`; the test catches a mismatch.
-- TD-1, TD-2: package `description`, `author` and the README one-liner are still placeholders.
-- TD-6: no bundle-size budget guards the entry point.
+- TD-6: no bundle-size budget.
+- TD-12: Vue, Livewire and Blade bindings are not built yet.
+- TD-16: no automated end-to-end test runs the core uploader against the Laravel endpoints.
 
 ## Related Docs
 

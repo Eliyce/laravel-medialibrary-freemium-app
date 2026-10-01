@@ -2,38 +2,44 @@
 
 ## What it is
 
-The one place consumers import `media-pro` from:
+The places consumers import `@eliyce/media-pro` from:
 
 ```ts
-import { VERSION } from 'media-pro';
+import { VERSION, MediaLibrary } from '@eliyce/media-pro'; // core API plus VERSION
+import { MediaLibrary } from '@eliyce/media-pro/core'; // core API only
 ```
 
-It works the same whether the consumer uses ES modules (`import`) or CommonJS (`require`), and
-TypeScript users get types with no extra install.
+The React components have their own entry (`@eliyce/media-pro/react`, see the
+[React module](../../../react/index/summary.md)), and the styles are at
+`@eliyce/media-pro/styles.css`. Every JS entry works with ES modules (`import`) and CommonJS
+(`require`), and TypeScript users get types with no extra install.
 
 ## Why it exists
 
-A single, deliberate entry point is the package's contract with its users. Anything exported here
-is a promise kept across releases; anything not exported here is private and can change freely.
-That lets the library grow without breaking the people who depend on it.
+Declared entry points are the package's contract with its users. Anything exported from them is a
+promise kept across releases; anything else is private and can change freely. Splitting core and
+React into subpaths lets a server or a non-React app use the core without pulling in React.
 
 ## Rules
 
-- Only names exported from the entry point are public. Deep imports such as
-  `media-pro/dist/index.js` are blocked, not merely discouraged.
+- Only names exported from a declared entry point are public. Deep imports such as
+  `@eliyce/media-pro/dist/core.js` are blocked, not merely discouraged.
 - Exports are named. There is no default export.
+- `.` and `./core` expose the very same objects, so mixing them in one app is safe.
 - Removing or renaming an export, or changing its type, is a breaking change and needs a major
   version (before 1.0, a minor flagged as breaking in the changeset).
 - Adding an export is a minor version.
-- Importing the package has no side effects, so bundlers can drop whatever a consumer does not use.
+- Importing a JS entry has no side effects, so bundlers drop whatever a consumer does not use.
+  Only the CSS entry counts as a side effect.
 
 ## What it exposes today
 
-| Export    | Meaning                         |
-| --------- | ------------------------------- |
-| `VERSION` | The installed package's version |
+| Entry    | Exports                                                                                   |
+| -------- | ----------------------------------------------------------------------------------------- |
+| `.`      | `VERSION` and everything in `./core`                                                      |
+| `./core` | `MediaLibrary`, `normalizeValue`, `validateFile`, `mapValidationErrors`, `translate`, ... |
 
-No media capabilities are exposed yet.
+The full list is in the [API registry](../../../../instructions/registries/api-registry.md).
 
 ## Error States
 

@@ -2,10 +2,10 @@
 
 ## What it is
 
-`VERSION` is a constant holding the installed version of `media-pro`, for example `'0.0.0'`.
+`VERSION` is a constant holding the installed version of `@eliyce/media-pro`, for example `'0.0.0'`.
 
 ```ts
-import { VERSION } from 'media-pro';
+import { VERSION } from '@eliyce/media-pro';
 console.log(VERSION); // '0.0.0'
 ```
 

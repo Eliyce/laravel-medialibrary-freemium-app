@@ -2,11 +2,11 @@
 
 ## Module Boundaries
 
-| File                  | Owns                                           |
-| --------------------- | ---------------------------------------------- |
-| `src/version.ts`      | `export const VERSION = '0.0.0';`              |
-| `src/index.ts`        | Re-exports `VERSION` as part of the public API |
-| `tests/index.test.ts` | Guards `VERSION === package.json#version`      |
+| File                  | Owns                                       |
+| --------------------- | ------------------------------------------ |
+| `src/version.ts`      | `export const VERSION = '0.0.0';`          |
+| `src/index.ts`        | Re-exports `VERSION` (root entry `.` only) |
+| `tests/index.test.ts` | Guards `VERSION === package.json#version`  |
 
 ## Public API
 
@@ -26,7 +26,8 @@ package.json#version ──(manual edit)──▶ src/version.ts ──tsup─�
           └──────── tests/index.test.ts compares ┘
 ```
 
-The value is inlined into both bundles; nothing reads `package.json` at runtime.
+The value is inlined into the root entry's ESM and CJS outputs; nothing reads `package.json` at
+runtime. `@eliyce/media-pro/core` and `@eliyce/media-pro/react` do not export `VERSION`.
 
 ## Release Steps
 
@@ -49,3 +50,4 @@ None.
 
 - `tests/index.test.ts` › `exports a VERSION matching package.json`. It imports `package.json`
   with an import attribute (`with { type: 'json' }`).
+- `tests/index.test.ts` also asserts that `./core` does not export `VERSION`.
