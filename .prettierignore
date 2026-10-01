@@ -3,3 +3,7 @@ coverage
 node_modules
 package-lock.json
 .paqad
+vendor
+laravel
+composer.json
+composer.lock

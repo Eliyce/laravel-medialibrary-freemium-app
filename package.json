@@ -1,7 +1,7 @@
 {
-  "name": "media-pro",
+  "name": "@eliyce/media-pro",
   "version": "0.0.0",
-  "description": "",
+  "description": "Media upload components for Laravel apps: a framework-agnostic core, React components and Tailwind styles, compatible with the Spatie Media Library Pro v6 API.",
   "license": "MIT",
   "author": "",
   "type": "module",
@@ -19,12 +19,36 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./core": {
+      "import": {
+        "types": "./dist/core.d.ts",
+        "default": "./dist/core.js"
+      },
+      "require": {
+        "types": "./dist/core.d.cts",
+        "default": "./dist/core.cjs"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/react.d.cts",
+        "default": "./dist/react.cjs"
+      }
+    },
+    "./styles.css": "./styles/media-pro.css",
     "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "styles"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "engines": {
     "node": ">=18"
   },
@@ -43,17 +67,44 @@
     "release": "npm run check && changeset publish",
     "prepublishOnly": "npm run check"
   },
-  "keywords": [],
+  "keywords": [
+    "laravel",
+    "media-library",
+    "upload",
+    "react",
+    "spatie",
+    "tailwind"
+  ],
   "publishConfig": {
     "access": "public"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitest/coverage-v8": "^5.0.3",
     "eslint": "^10.11.0",
+    "jsdom": "^29.1.1",
     "prettier": "^3.9.9",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.0",
