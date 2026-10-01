@@ -1,38 +1,108 @@
 # Architecture Overview
 
-`media-pro` is a single-package TypeScript library. It has no runtime dependencies, no I/O, and no UI. The public API is a single entry point.
+This repo publishes two packages from one root (decision D-01M3VMEVYRJDSVQWM1APMNBX13):
+
+- **`@eliyce/media-pro`** (npm): a framework-agnostic upload core, React components and Tailwind
+  source styles. No runtime dependencies; `react` and `react-dom` are optional peers.
+- **`eliyce/laravel-media-pro`** (Packagist): temporary uploads, upload routes, request handling
+  and validation rules on top of `spatie/laravel-medialibrary` v11.
+
+Together they reproduce the Spatie Media Library Pro v6 API for React and Laravel. They share no
+code; they meet over HTTP and a shared value and error contract.
 
 ## Layout
 
 ```text
+package.json            npm @eliyce/media-pro (files: dist, styles)
+composer.json           composer eliyce/laravel-media-pro (PSR-4 Eliyce\MediaPro\ → laravel/src/)
 src/
-  index.ts      public entry — re-exports the public API (named exports only)
-  version.ts    VERSION constant
-tests/
-  index.test.ts contract tests against the public entry
-dist/           build output (git-ignored, the only published folder)
+  index.ts              root entry: VERSION + the core API, re-exported by name
+  version.ts
+  core/                 framework-agnostic: no React, no DOM access at module scope
+  react/                React binding: hook, Attachment, Collection, components/
+styles/media-pro.css    Tailwind @apply source (exported as ./styles.css)
+tests/                  Vitest: core/ (node), react/ (jsdom), entry and package-export tests
+laravel/
+  src/                  provider, handler, Concerns, Commands, Exceptions, Http, Models, Rules, Support
+  config/media-pro.php
+  database/migrations/  create_temporary_uploads_table.php.stub
+  tests/                PHPUnit + orchestra/testbench
+phpunit.xml.dist
+.gitattributes          keeps JS and dev files out of the composer archive
+dist/                   build output (git-ignored)
 ```
 
-## Build and distribution flow
+Each registry publishes from the root: npm ships only `dist/` and `styles/` (plus README, LICENSE,
+`package.json`); the composer archive ships only `composer.json`, `laravel/src`, `laravel/config`,
+`laravel/database`, README and LICENSE.
+
+## Build and distribution flow (npm)
 
 ```text
-src/index.ts ──tsup──▶ dist/index.js     (ESM)  ◀── exports["."].import
-                     ├▶ dist/index.cjs    (CJS)  ◀── exports["."].require / main
-                     ├▶ dist/index.d.ts   (types for ESM)
-                     └▶ dist/index.d.cts  (types for CJS)
+src/index.ts       ──tsup──▶ dist/index.{js,cjs,d.ts,d.cts}   ◀── exports["."]
+src/core/index.ts  ──tsup──▶ dist/core.{js,cjs,d.ts,d.cts}    ◀── exports["./core"]
+src/react/index.ts ──tsup──▶ dist/react.{js,cjs,d.ts,d.cts}   ◀── exports["./react"]  ("use client")
+styles/media-pro.css ───────────────────────────────────────── ◀── exports["./styles.css"]
 ```
 
-Consumers may only import `media-pro` (and `media-pro/package.json`). Deep imports are not part of the contract, and the `exports` map blocks them.
+- The `media-pro-shared-core` esbuild plugin rewrites `./core/index.js` imports in the index and
+  react entries to `./core.js` / `./core.cjs`, so one `MediaLibrary` class exists at runtime.
+- The `media-pro-use-client` plugin prepends `"use client";` to the react outputs only. The core
+  and root outputs stay usable from React Server Components and plain Node.
+- `react`, `react-dom` and `react/jsx-runtime` are external.
+
+Consumers may import only the declared subpaths (`.`, `./core`, `./react`, `./styles.css`,
+`./package.json`). The `exports` map blocks deep imports.
 
 ## Modules
 
-| Module | Slug   | Source                           | Status                                               |
-| ------ | ------ | -------------------------------- | ---------------------------------------------------- |
-| Core   | `core` | `src/index.ts`, `src/version.ts` | Scaffold only; awaiting the first real media feature |
+| Module  | Slug      | Source                                          | Role                                                       |
+| ------- | --------- | ----------------------------------------------- | ---------------------------------------------------------- |
+| Core    | `core`    | `src/index.ts`, `src/version.ts`, `src/core/**` | Store, upload transport, validation, errors, translations  |
+| React   | `react`   | `src/react/**`, `styles/**`                     | React components, hook, helper components, styles          |
+| Laravel | `laravel` | `laravel/**`, `composer.json`                   | Endpoints, temporary uploads, request handling, validation |
 
 The authoritative module list is [`../rules/module-map.yml`](../rules/module-map.yml).
 
 ## Boundaries
 
-- `src/index.ts` is the only public surface. New features live in their own `src/<feature>/` folder and are re-exported from `src/index.ts` explicitly.
-- Tests import through the public entry (`../src/index.js`) unless they deliberately test an internal unit.
+- `src/core/` never imports React or `src/react/`, and touches `window`, `document`,
+  `XMLHttpRequest`, `URL` and `crypto` only inside functions, guarded for server rendering.
+- `src/react/` imports core only through `../core/index.js` (never deep core files), so the build
+  can share the core output.
+- `laravel/` has no dependency on the npm package and the npm package none on PHP. Changes to
+  either side of the contract below must change both sides and their docs together.
+- Vue, Livewire or Blade bindings, when added, sit next to `src/react/` and reuse core unchanged
+  (TD-12).
+
+## JS to Laravel contract
+
+| Concern       | JS side                                                                                     | Laravel side                                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Routes        | `routePrefix` (default `media-library-pro`), `uploadDomain`                                 | `Route::mediaLibrary($prefix = 'media-library-pro')`                                                                   |
+| Direct upload | multipart `file`, `uuid`, `name` to `/{prefix}/uploads`                                     | `UploadRequest` + `UploadController`                                                                                   |
+| Vapor upload  | signed URL → PUT to S3 → JSON `{ key, bucket, uuid, name, content_type }` to `/{prefix}/s3` | `S3UploadRequest` + `S3UploadController`                                                                               |
+| Response      | `parseUploadResponse` reads `UploadResponse`                                                | `MediaProValue::fromMedia`                                                                                             |
+| Auth / CSRF   | `Accept: application/json`, `X-Requested-With`, `X-XSRF-TOKEN` or `X-CSRF-TOKEN`            | `web` middleware; optional `auth` group; `media-pro-uploads` limiter                                                   |
+| Identity      | `generateUuid()` before upload; client uuid stays authoritative                             | `uuid` unique in `media`; kept when claimed                                                                            |
+| Form value    | `getValue()` / `HiddenFields`: `{ [uuid]: { uuid, name, order, custom_properties } }`       | `MediaLibraryRequestItem::collect` (uuid-keyed or list)                                                                |
+| Initial value | `normalizeValue(initialValue)`                                                              | `MediaProValue::collection($media)`                                                                                    |
+| Errors        | `mapValidationErrors(bag, name, uuids)`                                                     | `MediaRules` keys: `field`, `field.<uuid>.uuid`, `.name`, `.custom_properties.<key>`; `InvalidMediaUuid` under `media` |
+| Status codes  | 422 → server messages; 429 → `tryAgain`; else `somethingWentWrong`                          | Standard validation 422; throttle 429                                                                                  |
+
+The details live in the [API registry](../registries/api-registry.md#http-endpoints).
+
+## Security model
+
+- Temporary uploads are scoped to the session id that created them; the handler and
+  `UploadedMedia` compare it with `hash_equals` before claiming anything.
+- Every item of a request is resolved before any write; foreign media aborts the whole request.
+- Uploads must pass an extension allow-list on content (and on the client extension for direct
+  uploads), a size limit and a per-IP rate limit. SVG, HTML, XML and PHP are not allowed by
+  default.
+- Media uuids are unique; a race resolves to a 422 with stored files removed, on every supported
+  Laravel version.
+- Custom properties are whitelisted on the server and prototype-pollution keys are dropped on the
+  client.
+- Logs never carry file contents, file names, tokens or session ids.
+- Authentication is the app's choice: wrap `Route::mediaLibrary()` in `auth` middleware.

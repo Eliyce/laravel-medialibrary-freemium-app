@@ -1,28 +1,79 @@
 version: 1
-last_updated_at: 2026-10-01T11:18:40Z
+last_updated_at: 2026-10-01T14:00:00Z
 domain_glossary:
   preferred_terms:
     - media-pro
     - public API
+    - temporary upload
+    - media uuid
+    - collection
+    - attachment
+    - value item
+    - media value
+    - media object
+    - custom property
   synonyms:
     entry point: public API
     export: public API
+    subpath export: public API
+    temp upload: temporary upload
+    pending upload: temporary upload
+    uuid: media uuid
+    form value: media value
+    media item: value item
+  definitions:
+    temporary upload: >-
+      A file stored by POST /{prefix}/uploads or /{prefix}/s3 before its form is submitted. It is a
+      `TemporaryUpload` row (table `temporary_uploads`) owning one Spatie media row, scoped to the
+      session id that created it, and removed by `media-pro:delete-old-temporary-uploads`.
+    media uuid: >-
+      The uuid that identifies one media item end to end. The browser generates it
+      (`generateUuid`) before uploading, the server stores it on the media row and keeps it when
+      the item moves from a temporary upload into a model collection. Unique in the media table.
+    collection: >-
+      A Spatie media collection on a model (`toMediaCollection('images')`), and the React
+      `MediaLibraryCollection` component that edits a sortable list of items for one.
+    attachment: >-
+      The React `MediaLibraryAttachment` component: one file by default (a new file replaces it),
+      several with `multiple`.
+    value item: >-
+      One entry of the media value: `{ uuid, name, order, custom_properties, file_name?,
+      preview_url?, original_url?, size?, mime_type?, extension? }` (`ValueItem` in TypeScript,
+      `MediaLibraryRequestItem` in PHP).
+    media value: >-
+      What a component submits under its `name`: value items keyed by media uuid, in display
+      order, with a zero-based `order` (`MediaValue`).
+    media object: >-
+      One entry of the core state (`MediaObject`): the value item as `attributes` plus upload
+      progress, client errors, an optional object-URL preview and a stable `client_id`.
+    custom property: >-
+      A free key/value on a value item (`custom_properties`). The server saves only keys listed
+      in `withCustomProperties()`; `__proto__`, `constructor` and `prototype` are always dropped
+      on the client.
   notes: >-
-    The package is a scaffold. No media domain code exists yet, so the glossary
-    only covers packaging terms. Add media-domain terms (e.g. asset, transform,
-    codec) as features land, and keep them consistent with exported symbol names.
+    Terms follow Spatie Media Library Pro v6 and the exported symbol names. "Media" alone means a
+    Spatie media row; say "temporary upload" for the pre-submit file and "media object" for the
+    client state entry.
 modules:
   - name: Core
     slug: core
     auto_update_module_name: true
     derivation: inferred
-    confidence: low
+    confidence: high
     source_paths:
       - src/index.ts
       - src/version.ts
+      - src/core/**
     evidence:
       symbols:
         - VERSION
+        - MediaLibrary
+        - normalizeValue
+        - mapValidationErrors
+        - validateFile
+        - getCsrfHeaders
+        - generateUuid
+        - defaultTranslations
     features:
       - name: Version Info
         slug: version-info
@@ -38,3 +89,154 @@ modules:
         confidence: high
         source_paths:
           - src/index.ts
+          - src/core/index.ts
+      - name: Media Library Store
+        slug: media-library-store
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/core/media-library.ts
+          - src/core/value.ts
+          - src/core/types.ts
+      - name: Upload Transport
+        slug: upload-transport
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/core/upload.ts
+          - src/core/csrf.ts
+          - src/core/uuid.ts
+      - name: Validation and Errors
+        slug: validation-and-errors
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/core/validation.ts
+          - src/core/errors.ts
+      - name: Translations
+        slug: translations
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/core/translations.ts
+  - name: React
+    slug: react
+    auto_update_module_name: true
+    derivation: inferred
+    confidence: high
+    source_paths:
+      - src/react/**
+      - styles/**
+    evidence:
+      symbols:
+        - MediaLibraryAttachment
+        - MediaLibraryCollection
+        - useMediaLibrary
+        - HiddenFields
+        - DropZone
+    features:
+      - name: Use Media Library Hook
+        slug: use-media-library
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/react/use-media-library.ts
+      - name: Media Library Attachment
+        slug: media-library-attachment
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/react/MediaLibraryAttachment.tsx
+          - src/react/props.ts
+      - name: Media Library Collection
+        slug: media-library-collection
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/react/MediaLibraryCollection.tsx
+      - name: Helper Components
+        slug: helper-components
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - src/react/components/**
+          - src/react/utils.ts
+          - src/react/index.ts
+      - name: Styles
+        slug: styles
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - styles/**
+  - name: Laravel
+    slug: laravel
+    auto_update_module_name: true
+    derivation: inferred
+    confidence: high
+    source_paths:
+      - laravel/**
+      - composer.json
+    evidence:
+      symbols:
+        - MediaProServiceProvider
+        - TemporaryUpload
+        - InteractsWithMediaPro
+        - PendingMediaLibraryRequestHandler
+        - MediaRules
+    features:
+      - name: Package Setup
+        slug: package-setup
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - laravel/src/MediaPro*.php
+          - laravel/config/**
+          - laravel/database/**
+          - laravel/src/Support/MediaProConfig*
+          - laravel/src/Support/DefaultAllowedExtensions*
+          - composer.json
+      - name: Temporary Uploads
+        slug: temporary-uploads
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - laravel/src/Http/**
+          - laravel/src/Models/**
+          - laravel/src/Support/MediaProValue*
+          - laravel/src/Support/StoredMediaFiles*
+      - name: Request Handling
+        slug: request-handling
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - laravel/src/Concerns/**
+          - laravel/src/PendingMediaLibraryRequestHandler*
+          - laravel/src/MediaLibraryRequestItem*
+          - laravel/src/Exceptions/**
+          - laravel/src/Support/MediaLookup*
+      - name: Media Validation
+        slug: media-validation
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - laravel/src/Rules/**
+      - name: Temporary Upload Cleanup
+        slug: temporary-upload-cleanup
+        auto_update_feature_name: true
+        derivation: inferred
+        confidence: high
+        source_paths:
+          - laravel/src/Commands/**
