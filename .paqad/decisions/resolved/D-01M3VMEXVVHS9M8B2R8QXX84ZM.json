@@ -1,0 +1,26 @@
+{
+  "id": "D-01M3VMEXVVHS9M8B2R8QXX84ZM",
+  "category": "ux-pattern",
+  "title": "Styling: Tailwind @apply source only, media-library-* classes",
+  "context": "Spatie ships Tailwind source + prebuilt css.",
+  "options": [
+    {
+      "option_key": "tailwind",
+      "label": "Tailwind source only"
+    },
+    {
+      "option_key": "both",
+      "label": "Tailwind source + prebuilt"
+    },
+    {
+      "option_key": "plain",
+      "label": "Plain CSS + variables"
+    }
+  ],
+  "recommendation": "plain",
+  "created_at": "2026-10-01T11:44:11.131Z",
+  "status": "resolved",
+  "chosen": "tailwind",
+  "rationale": "User chose Tailwind source only, no prebuilt CSS",
+  "resolved_at": "2026-10-01T11:44:15.009Z"
+}

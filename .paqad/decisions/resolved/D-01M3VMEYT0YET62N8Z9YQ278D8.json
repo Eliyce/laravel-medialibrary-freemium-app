@@ -1,0 +1,22 @@
+{
+  "id": "D-01M3VMEYT0YET62N8Z9YQ278D8",
+  "category": "workflow-or-tool",
+  "title": "Package names: @eliyce/media-pro (npm), eliyce/laravel-media-pro (composer)",
+  "context": "Publishing identity",
+  "options": [
+    {
+      "option_key": "eliyce",
+      "label": "@eliyce/media-pro"
+    },
+    {
+      "option_key": "keep",
+      "label": "media-pro"
+    }
+  ],
+  "recommendation": "eliyce",
+  "created_at": "2026-10-01T11:44:12.096Z",
+  "status": "resolved",
+  "chosen": "eliyce",
+  "rationale": "User chose @eliyce/media-pro",
+  "resolved_at": "2026-10-01T11:44:15.961Z"
+}

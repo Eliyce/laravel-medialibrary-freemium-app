@@ -1,0 +1,23 @@
+{
+  "id": "D-01M3VQEGYYBZFRSYGTCFP6NBJS",
+  "category": "spec.change",
+  "title": "Add Laravel 13 support to composer constraints",
+  "context": "The frozen spec FR-37 limits illuminate/* to ^10.2|^11|^12. Laravel 13 is current, and medialibrary 11 supports ^13, so installs on Laravel 13 would fail.",
+  "options": [
+    {
+      "option_key": "add13",
+      "label": "Add ^13.0 (tested with testbench 11)"
+    },
+    {
+      "option_key": "keep",
+      "label": "Keep ^10.2|^11|^12 as frozen"
+    }
+  ],
+  "recommendation": "add13",
+  "created_at": "2026-10-01T12:36:23.646Z",
+  "status": "resolved",
+  "change": "01M3VMN3SNVY5VABBX32JS8YTB",
+  "chosen": "add13",
+  "rationale": "Owner approved adding Laravel 13 support",
+  "resolved_at": "2026-10-01T13:13:58.495Z"
+}

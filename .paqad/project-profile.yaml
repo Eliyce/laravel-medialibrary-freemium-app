@@ -14,8 +14,8 @@ commands:
 testing:
   runner_id: vitest
   detected_by: script
-  recorded_at: 2026-10-01T11:09:06.332Z
-  lockfile_hash: sha256:d30687b201266d26801590708ebd10c4a35219f766d743f8019f89096d65de34
+  recorded_at: 2026-10-01T13:28:53.714Z
+  lockfile_hash: sha256:e8c782d6030d22111e57c53dbe6b99d65e90cb02c42dde5613edbad851f992f1
   parallel: native
 compliance_packs: []
 mcp:

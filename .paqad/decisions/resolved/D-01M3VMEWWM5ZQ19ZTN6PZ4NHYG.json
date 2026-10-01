@@ -1,0 +1,22 @@
+{
+  "id": "D-01M3VMEWWM5ZQ19ZTN6PZ4NHYG",
+  "category": "architecture-path",
+  "title": "JS layout: core + react in one npm package with subpath exports",
+  "context": "Vue/Livewire/Blade come later; core must be framework-agnostic.",
+  "options": [
+    {
+      "option_key": "single",
+      "label": "Core + React in one package"
+    },
+    {
+      "option_key": "multi",
+      "label": "Separate packages"
+    }
+  ],
+  "recommendation": "single",
+  "created_at": "2026-10-01T11:44:10.132Z",
+  "status": "resolved",
+  "chosen": "single",
+  "rationale": "User chose single npm package with subpath exports",
+  "resolved_at": "2026-10-01T11:44:14.051Z"
+}
