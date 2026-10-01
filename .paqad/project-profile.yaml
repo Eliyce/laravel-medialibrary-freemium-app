@@ -1,0 +1,53 @@
+project:
+  name: media-pro
+  id: media-pro
+  description: media-pro npm package (TypeScript library, dual ESM/CJS)
+commands:
+  install: npm install
+  dev: npm run dev
+  test: npm test -- --reporter=tap
+  test_single: npm test -- <pattern> --reporter=tap
+  lint: npm run lint
+  format: npm run format
+  migrate: echo "no migrations (library)"
+  build: npm run build
+testing:
+  runner_id: vitest
+  detected_by: script
+  recorded_at: 2026-10-01T11:09:06.332Z
+  lockfile_hash: sha256:d30687b201266d26801590708ebd10c4a35219f766d743f8019f89096d65de34
+  parallel: native
+compliance_packs: []
+mcp:
+  servers: []
+custom:
+  classification_dimensions: []
+  verification_plugins: []
+  escalation_rules: []
+active_capabilities:
+  - content
+  - coding
+  - security
+stack_profile:
+  frameworks:
+    - node-library
+  traits:
+    - vitest
+  toolchains:
+    - ecosystem: node
+      package_manager: pnpm
+      lockfile: pnpm-lock.yaml
+    - ecosystem: node
+      package_manager: npm
+      lockfile: package-lock.json
+  version_bands: []
+  sources:
+    - file: package-lock.json
+      kind: lockfile
+      detail: Used for stack detection and version resolution
+    - file: package.json
+      kind: manifest
+      detail: Used for stack detection and version resolution
+    - file: interactive-onboarding
+      kind: fallback
+      detail: User-selected fallback stack profile
