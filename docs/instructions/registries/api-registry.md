@@ -2,9 +2,9 @@
 
 The public API of `media-pro`: every symbol exported from `src/index.ts`. Removing or changing any row is a breaking change (major bump; pre-1.0, a flagged minor).
 
-| Export    | Kind     | Type     | Module | Since | Description                                    |
-| --------- | -------- | -------- | ------ | ----- | ---------------------------------------------- |
-| `VERSION` | constant | `string` | Core   | 0.0.0 | Package version; equals `package.json#version` |
+| Export    | Kind     | Type                          | Module | Since | Description                                    | Docs                                                          |
+| --------- | -------- | ----------------------------- | ------ | ----- | ---------------------------------------------- | ------------------------------------------------------------- |
+| `VERSION` | constant | `string` (literal in `.d.ts`) | Core   | 0.0.0 | Package version; equals `package.json#version` | [docs](../../modules/core/features/version-info/technical.md) |
 
 ## Entry points
 
