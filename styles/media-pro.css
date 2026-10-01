@@ -1,0 +1,244 @@
+/*
+ * @eliyce/media-pro styles: Tailwind CSS source.
+ *
+ * Every rule uses @apply with core Tailwind utilities only, so the components follow your own
+ * Tailwind theme. Import this file from the stylesheet Tailwind processes, after Tailwind itself:
+ *
+ *   @import 'tailwindcss';
+ *   @import '@eliyce/media-pro/styles.css';
+ *
+ * Every class starts with `media-library`. Override any rule in your own CSS, or reorder the
+ * three sections through `.media-library { grid-template-areas: ... }`.
+ */
+
+/* Layout: errors, items and uploader are named grid areas. */
+.media-library {
+  @apply grid w-full gap-4 text-sm text-gray-700;
+  grid-template-areas:
+    'errors'
+    'items'
+    'uploader';
+}
+
+.media-library-empty,
+.media-library-single,
+.media-library-multiple,
+.media-library-collection {
+  @apply min-w-0;
+}
+
+.media-library-icon {
+  @apply inline-block h-4 w-4 shrink-0;
+}
+
+/* Buttons */
+.media-library-button {
+  @apply inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40;
+}
+
+.media-library-button-icon {
+  @apply h-4 w-4;
+}
+
+/* Component-level errors */
+.media-library-listerrors {
+  @apply flex items-start gap-3 rounded-md border border-red-200 bg-red-50 p-3 text-red-700;
+  grid-area: errors;
+}
+
+.media-library-listerrors-list {
+  @apply m-0 flex flex-1 list-none flex-col gap-1 p-0;
+}
+
+.media-library-listerror {
+  @apply flex items-start gap-2;
+}
+
+.media-library-listerror-icon {
+  @apply mt-px h-4 w-4 text-red-500;
+}
+
+.media-library-listerror-title {
+  @apply font-semibold;
+}
+
+.media-library-listerror-text {
+  @apply break-words;
+}
+
+.media-library-listerrors-clear {
+  @apply text-red-600 hover:bg-red-100 hover:text-red-800;
+}
+
+/* Items */
+.media-library-items {
+  @apply m-0 flex list-none flex-col gap-2 p-0;
+  grid-area: items;
+}
+
+.media-library-item {
+  @apply flex flex-wrap items-center gap-3 rounded-md border border-gray-200 bg-white p-2;
+}
+
+.media-library-item-row {
+  @apply flex-nowrap;
+}
+
+.media-library-item-drop-target {
+  @apply border-blue-500 ring-2 ring-blue-200;
+}
+
+.media-library-item-remove {
+  @apply ml-auto;
+}
+
+.media-library-properties {
+  @apply flex min-w-0 flex-1 flex-col gap-1;
+}
+
+.media-library-name {
+  @apply truncate font-medium text-gray-900;
+}
+
+.media-library-property {
+  @apply truncate text-xs text-gray-500;
+}
+
+.media-library-fields {
+  @apply flex min-w-0 flex-1 flex-col gap-2;
+}
+
+/* Sorting */
+.media-library-sort {
+  @apply flex shrink-0 flex-col items-center;
+}
+
+.media-library-drag-handle {
+  @apply flex h-6 w-8 cursor-grab items-center justify-center text-gray-400 active:cursor-grabbing;
+}
+
+.media-library-drag-handle-icon {
+  @apply h-4 w-4;
+}
+
+.media-library-sort-button {
+  @apply h-6;
+}
+
+/* Thumbnail */
+.media-library-thumb {
+  @apply relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100;
+}
+
+.media-library-thumb-img {
+  @apply h-full w-full object-cover;
+}
+
+.media-library-thumb-extension {
+  @apply flex h-full w-full items-center justify-center px-1 text-xs font-semibold uppercase text-gray-500;
+}
+
+.media-library-thumb-extension-truncate {
+  @apply truncate;
+}
+
+.media-library-replace {
+  @apply absolute right-1 bottom-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-white text-gray-600 shadow focus-within:ring-2 focus-within:ring-blue-500 hover:text-gray-900;
+}
+
+.media-library-replace-icon {
+  @apply h-3 w-3;
+}
+
+/* Progress */
+.media-library-progress-wrap {
+  @apply absolute inset-x-1 bottom-1 h-1 overflow-hidden rounded-full bg-gray-200;
+}
+
+.media-library-progress {
+  @apply block h-full bg-blue-500 transition-all;
+}
+
+/* Per-item errors */
+.media-library-item-errors {
+  @apply flex w-full items-start gap-2 rounded-md bg-red-50 p-2 text-red-700;
+}
+
+.media-library-item-errors-icon {
+  @apply mt-px h-4 w-4 text-red-500;
+}
+
+.media-library-item-errors-list {
+  @apply m-0 flex flex-1 list-none flex-col gap-1 p-0;
+}
+
+.media-library-item-error {
+  @apply break-words;
+}
+
+.media-library-item-errors-back {
+  @apply rounded-md px-2 py-1 font-medium text-red-700 underline hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500;
+}
+
+/* Fields */
+.media-library-field {
+  @apply flex flex-col gap-1;
+}
+
+.media-library-label {
+  @apply text-xs font-medium text-gray-600;
+}
+
+.media-library-input {
+  @apply w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200;
+}
+
+.media-library-field-error {
+  @apply m-0 text-xs text-red-600;
+}
+
+/* Uploader */
+.media-library-uploader {
+  @apply relative;
+  grid-area: uploader;
+}
+
+.media-library-uploader-add {
+  @apply w-full;
+}
+
+.media-library-input-file {
+  @apply sr-only;
+}
+
+.media-library-dropzone {
+  @apply flex cursor-pointer rounded-md border-2 border-dashed border-gray-300 bg-gray-50 transition-colors hover:border-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
+}
+
+.media-library-placeholder {
+  @apply relative flex w-full items-center gap-3 p-4;
+}
+
+.media-library-dropzone-drag {
+  @apply bg-blue-50 text-blue-700;
+}
+
+.media-library-dropzone-invalid {
+  @apply bg-red-50 text-red-700;
+}
+
+.media-library-placeholder-icon {
+  @apply h-6 w-6 text-gray-400;
+}
+
+.media-library-help {
+  @apply flex flex-col gap-1;
+}
+
+.media-library-help-label {
+  @apply font-medium text-gray-700;
+}
+
+.media-library-help-types {
+  @apply text-xs text-gray-500;
+}
