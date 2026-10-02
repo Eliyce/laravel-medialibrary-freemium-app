@@ -11,6 +11,10 @@ repo holds two packages:
 Both packages sit on top of [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary)
 v11. They do not need a Spatie Media Library Pro license.
 
+> Media Pro is an independent project. It is not affiliated with, endorsed by or sponsored by
+> Spatie. "Spatie" and "Media Library Pro" are used only to describe API compatibility, and no
+> Spatie Media Library Pro code is included.
+
 **Requirements:** PHP 8.2+, Laravel 10.2 to 13, spatie/laravel-medialibrary 11, Node 18+, React
 18+ (React components only), and Tailwind CSS for the styles.
 
@@ -394,3 +398,7 @@ packages share version numbers.
 ## License
 
 MIT, © Eliyce. See [LICENSE](LICENSE).
+
+Media Pro is not affiliated with or endorsed by Spatie. It builds on the MIT-licensed
+[`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) as a regular
+dependency and contains no code from the paid Spatie Media Library Pro.
