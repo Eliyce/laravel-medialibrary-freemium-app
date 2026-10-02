@@ -146,6 +146,26 @@ describe('built package', () => {
     expect(Object.keys(reactEntry).sort()).toEqual([...REACT_EXPORTS].sort());
   });
 
+  it('inlines only the package.json version into the built entries (AC-70, INV-13)', () => {
+    const literal = JSON.stringify(pkg.version);
+    expect(dist('index.js')).toContain(literal);
+    expect(dist('index.cjs')).toContain(literal);
+
+    const leaked = ['devDependencies', '@changesets/cli', 'peerDependenciesMeta', pkg.description];
+    for (const entry of ['index', 'core', 'react']) {
+      for (const file of [`${entry}.js`, `${entry}.cjs`, `${entry}.d.ts`, `${entry}.d.cts`]) {
+        const code = dist(file);
+        for (const text of leaked) expect(code, `${file}: ${text}`).not.toContain(text);
+      }
+    }
+
+    for (const file of ['index.d.ts', 'index.d.cts']) {
+      const types = dist(file);
+      expect(types, file).toMatch(/declare const VERSION: string;/);
+      expect(types, file).not.toContain('package.json');
+    }
+  });
+
   it('packs only the build, styles and docs (AC-66)', () => {
     const output = execFileSync('npm', ['pack', '--dry-run', '--json', '--silent'], {
       cwd: root,
