@@ -31,7 +31,7 @@ The repo holds two publishable packages: an npm library written in TypeScript (p
 | Autoload        | PSR-4 `Eliyce\MediaPro\` → `laravel/src/`                                   |
 | Package manager | Composer 2 (`composer.lock` committed for development)                      |
 | Tests           | PHPUnit 10.5/11 with orchestra/testbench, sqlite `:memory:`                 |
-| Release         | Packagist from the repo root; tagging strategy open (TD-17)                 |
+| Release         | Packagist from the repo root; shares the `vX.Y.Z` npm tags (TD-17)          |
 
 Detected traits: `typescript`, `vitest`, `eslint`, `publishable` (see
 `.paqad/detection-report.json`). paqad's detection does not model the PHP half; these docs do.

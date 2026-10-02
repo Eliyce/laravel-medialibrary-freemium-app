@@ -4,14 +4,14 @@
 
 - Follow semver as defined in [`../rules/coding/stacks/node-library/conventions.md`](../rules/coding/stacks/node-library/conventions.md#semver-discipline).
 - Every user-facing change adds a changeset (`npm run changeset`); `changeset version` bumps `package.json` and writes `CHANGELOG.md`.
-- `src/version.ts` exports `VERSION`, which must equal `package.json#version`. `tests/index.test.ts` enforces this, so bump both together after `changeset version`.
+- `src/version.ts` imports `version` from `package.json` and exports it as `VERSION`, so `package.json#version` is the only copy (INV-13) and `changeset version` (`npm run version-packages`) needs no manual follow-up. esbuild inlines only that field into the JS and `.d.ts` outputs; `tests/index.test.ts` and `tests/package-exports.test.ts` check the value and that no other `package.json` field reaches those files. The source maps (`dist/*.map`) still embed all of `package.json` in `sourcesContent`, which is harmless because `package.json` ships in the tarball anyway.
 - The package is pre-1.0 (`0.0.0`, first release pending as a minor). Breaking changes may land in minors until `1.0.0`, but must still be called out in the changeset.
 - Every subpath (`.`, `./core`, `./react`, `./styles.css`) and every `media-library-*` class name is public API.
 
 ## Composer package versioning
 
 - Semver through git tags read by Packagist. There is no version field in `composer.json`.
-- How npm and composer releases share tags in one repo is not decided yet (TD-17).
+- `changeset publish` tags `vX.Y.Z` in this single-package repo and Packagist reads the same tags, so both packages share version numbers. Confirming that scheme before the first release is TD-17.
 - Public PHP API: the classes and methods in the [API registry](../registries/api-registry.md#composer-eliycelaravel-media-pro), the config keys, the route macro, the rate limiter name, the command name and the publish tags.
 
 ## Consumer version bands

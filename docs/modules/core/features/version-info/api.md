@@ -2,9 +2,9 @@
 
 ## Exports
 
-| Export    | Entry                     | Kind     | Type                                               | Since |
-| --------- | ------------------------- | -------- | -------------------------------------------------- | ----- |
-| `VERSION` | `@eliyce/media-pro` (`.`) | constant | `string` (declared as the literal `"0.0.0"` today) | 0.0.0 |
+| Export    | Entry                     | Kind     | Type     | Since |
+| --------- | ------------------------- | -------- | -------- | ----- |
+| `VERSION` | `@eliyce/media-pro` (`.`) | constant | `string` | 0.0.0 |
 
 ```ts
 import { VERSION } from '@eliyce/media-pro';
@@ -13,8 +13,8 @@ console.log(VERSION); // "0.0.0", always equal to package.json#version
 ```
 
 - Only the root entry exports it. `@eliyce/media-pro/core` and `@eliyce/media-pro/react` do not.
-- The `.d.ts` declares `declare const VERSION = "0.0.0";`. The literal changes with every release,
-  so treat it as `string`.
+- The `.d.ts` declares `declare const VERSION: string;`. The value comes from
+  `package.json#version` at build time.
 - No functions, events, config keys or HTTP surface.
 
 ## Related

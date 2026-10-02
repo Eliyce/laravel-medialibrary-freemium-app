@@ -1,0 +1,23 @@
+{
+  "id": "D-01M3XX5WYCXYPQ4V5VSKTREG8Z",
+  "category": "spec.change",
+  "title": "Add release-readiness requirements (licence holder, version sync, publishable check)",
+  "context": "Owner asked on 2026-10-02 that the package carry their licence and publish to npm without blockers. A publish dry-run fails today (prettier on .claude/ files) and changeset version would desync VERSION. The frozen spec lists publishing as a non-goal.",
+  "options": [
+    {
+      "option_key": "amend",
+      "label": "Amend the spec with ACs 69-72 and INV-13; keep the act of publishing out of scope"
+    },
+    {
+      "option_key": "separate",
+      "label": "Track it as a separate change"
+    }
+  ],
+  "recommendation": "amend",
+  "created_at": "2026-10-02T08:55:01.324Z",
+  "status": "resolved",
+  "change": "01M3VMN3SNVY5VABBX32JS8YTB",
+  "chosen": "amend",
+  "rationale": "Owner requested it directly in chat on 2026-10-02 (licence + blocker-free npm publish)",
+  "resolved_at": "2026-10-02T08:55:01.828Z"
+}

@@ -19,7 +19,7 @@ The public API of both packages in this repo. Removing or changing any row is a 
 
 | Export                | Kind     | Signature / type                                                                     | Since | Docs                                                                   |
 | --------------------- | -------- | ------------------------------------------------------------------------------------ | ----- | ---------------------------------------------------------------------- |
-| `VERSION`             | constant | `string` (literal in `.d.ts`); `.` only                                              | 0.0.0 | [docs](../../modules/core/features/version-info/technical.md)          |
+| `VERSION`             | constant | `string` from `package.json#version`; `.` only                                       | 0.0.0 | [docs](../../modules/core/features/version-info/technical.md)          |
 | `MediaLibrary`        | class    | `new MediaLibrary(config: MediaLibraryConfig)`                                       | 0.1.0 | [docs](../../modules/core/features/media-library-store/technical.md)   |
 | `normalizeValue`      | function | `(value: MediaValue \| ValueItemInput[] \| null \| undefined) => MediaValue`         | 0.1.0 | [docs](../../modules/core/features/media-library-store/technical.md)   |
 | `validateFile`        | function | `(file: FileLike, rules?: ValidationRules, translations?: Translations) => string[]` | 0.1.0 | [docs](../../modules/core/features/validation-and-errors/technical.md) |

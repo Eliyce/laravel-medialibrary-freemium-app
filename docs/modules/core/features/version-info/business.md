@@ -22,9 +22,9 @@ reports or diagnostics, without reading `package.json` from disk.
 
 ## Release responsibility
 
-The value is written by hand in the source. Whoever runs `changeset version` must also update
-`VERSION` to the new number before publishing. The test suite fails if the two disagree, and
-publishing runs the test suite, so a mismatch cannot ship.
+Nobody maintains the value by hand. The build reads it from `package.json`, so the version bump
+that `npm run version-packages` makes is the only step. The test suite checks the built value, and
+publishing runs the test suite.
 
 ## Error States
 

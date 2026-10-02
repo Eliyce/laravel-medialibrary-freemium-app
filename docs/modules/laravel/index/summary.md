@@ -62,7 +62,8 @@ alongside them (TD-9).
 - TD-5: no CI matrix for Laravel 10 to 13.
 - TD-19: no CI job exercises the Laravel 10.x paths (the `ValidatesMedia` fallback below 10.43
   and the pre-10.20 uuid-race detection); they are covered by local runs and simulation only.
-- TD-17: no tagging strategy for Packagist releases from this repo.
+- TD-17: Packagist releases reuse the npm `vX.Y.Z` tags, so both packages share version
+  numbers; the scheme is not yet confirmed.
 
 ## Related Docs
 

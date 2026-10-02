@@ -54,11 +54,12 @@ Core exports `MediaLibrary`, `defaultTranslations`, `resolveTranslations`, `tran
 - `tests/index.test.ts`: `VERSION` sync; `.` and `./core` expose the same core objects; no
   default export.
 - `tests/package-exports.test.ts`: builds the package, then checks the `exports` map, the
-  `"use client"` placement and that `dist/core.*` has no React import.
+  `"use client"` placement, that `dist/core.*` has no React import, that only the
+  `package.json` version is inlined into the `dist` JS and `.d.ts` files, the packed file list
+  and the MIT licence.
 
 ## Known Gaps
 
-- TD-8: `VERSION` must be bumped by hand after `changeset version`; the test catches a mismatch.
 - TD-6: no bundle-size budget.
 - TD-12: Vue, Livewire and Blade bindings are not built yet.
 - TD-16: no automated end-to-end test runs the core uploader against the Laravel endpoints.

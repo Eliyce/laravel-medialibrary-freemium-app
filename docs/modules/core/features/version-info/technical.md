@@ -2,41 +2,44 @@
 
 ## Module Boundaries
 
-| File                  | Owns                                       |
-| --------------------- | ------------------------------------------ |
-| `src/version.ts`      | `export const VERSION = '0.0.0';`          |
-| `src/index.ts`        | Re-exports `VERSION` (root entry `.` only) |
-| `tests/index.test.ts` | Guards `VERSION === package.json#version`  |
+| File                            | Owns                                                                        |
+| ------------------------------- | --------------------------------------------------------------------------- |
+| `src/version.ts`                | `import { version } from '../package.json'`; `export const VERSION: string` |
+| `src/index.ts`                  | Re-exports `VERSION` (root entry `.` only)                                  |
+| `tests/index.test.ts`           | Guards `VERSION === package.json#version` from source                       |
+| `tests/package-exports.test.ts` | Guards the built value and that no other `package.json` field is bundled    |
 
 ## Public API
 
-| Export    | Kind     | Declared type                                          | Since |
-| --------- | -------- | ------------------------------------------------------ | ----- |
-| `VERSION` | constant | `string` (emitted as the literal `"0.0.0"` in `.d.ts`) | 0.0.0 |
+| Export    | Kind     | Declared type                               | Since |
+| --------- | -------- | ------------------------------------------- | ----- |
+| `VERSION` | constant | `string` (`declare const VERSION: string;`) | 0.0.0 |
 
-Because it is a `const` with a string initializer, the generated declaration is
-`declare const VERSION = "0.0.0";`. Its literal type changes with every release. Consumers should
-treat it as `string` and not narrow on the literal.
+The explicit `: string` annotation keeps the declaration free of the literal and of any
+reference to `package.json`, so the `.d.ts` does not change between releases.
 
 ## Data Flow
 
 ```text
-package.json#version ──(manual edit)──▶ src/version.ts ──tsup──▶ dist/index.{js,cjs,d.ts,d.cts}
-          ▲                                     │
-          └──────── tests/index.test.ts compares ┘
+package.json#version ──(named JSON import)──▶ src/version.ts ──tsup/esbuild──▶ dist/index.{js,cjs}
 ```
 
-The value is inlined into the root entry's ESM and CJS outputs; nothing reads `package.json` at
-runtime. `@eliyce/media-pro/core` and `@eliyce/media-pro/react` do not export `VERSION`.
+`package.json#version` is the single source of truth (INV-13). esbuild's JSON loader exposes each
+top-level field as its own export and tree-shakes the rest, so the root entry's ESM and CJS
+outputs inline only `var version = "x.y.z"`. Nothing reads `package.json` at runtime.
+`@eliyce/media-pro/core` and `@eliyce/media-pro/react` do not export `VERSION`.
+
+The source maps (`dist/index.*.map`) carry `package.json` in `sourcesContent`, like every other
+bundled source file. That is the same file the tarball already ships.
 
 ## Release Steps
 
-1. `npx changeset version` bumps `package.json#version` and writes `CHANGELOG.md`.
-2. Set `VERSION` in `src/version.ts` to the same value.
-3. `npm run release` runs `npm run check` (which includes the test) and then `changeset publish`.
-   `prepublishOnly` also runs `npm run check`.
+1. `npm run version-packages` (`changeset version`) bumps `package.json#version` and writes
+   `CHANGELOG.md`.
+2. `npm run release` runs `npm run check` (which rebuilds with the new version and runs the tests)
+   and then `changeset publish`. `prepublishOnly` also runs `npm run check`.
 
-TD-8 tracks generating the value at build time (tsup `define`) to remove step 2.
+No manual edit of `src/version.ts` is needed.
 
 ## Error Handling
 
@@ -44,10 +47,15 @@ None. The constant cannot throw.
 
 ## Dependencies
 
-None.
+None at runtime. The build relies on `resolveJsonModule` (TypeScript) and esbuild's JSON loader.
 
 ## Testing Entry Points
 
-- `tests/index.test.ts` › `exports a VERSION matching package.json`. It imports `package.json`
-  with an import attribute (`with { type: 'json' }`).
-- `tests/index.test.ts` also asserts that `./core` does not export `VERSION`.
+- `tests/index.test.ts` › `exports a VERSION matching package.json`, and that `./core` does not
+  export `VERSION`.
+- `tests/package-exports.test.ts` › the ESM and CJS probes read `VERSION` from the built root
+  entry and compare it with `package.json#version`.
+- `tests/package-exports.test.ts` › `inlines only the package.json version into the built entries`
+  checks every `dist` JS and `.d.ts` output for leaked fields (`devDependencies`,
+  `@changesets/cli`, `peerDependenciesMeta`, the description) and the `VERSION: string`
+  declaration.

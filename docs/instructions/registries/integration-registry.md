@@ -17,7 +17,7 @@ External systems the packages integrate with.
 
 ## Distribution integration
 
-| System       | Package                    | Configuration                                                                                                                   |
-| ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| npm registry | `@eliyce/media-pro`        | `package.json#publishConfig.access: public`, `files: [dist, styles]`, changesets                                                |
-| Packagist    | `eliyce/laravel-media-pro` | Root `composer.json`; `.gitattributes` export-ignore keeps JS and dev files out of the archive; release tagging is open (TD-17) |
+| System       | Package                    | Configuration                                                                                                                                       |
+| ------------ | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm registry | `@eliyce/media-pro`        | `package.json#publishConfig.access: public`, `files: [dist, styles]`, changesets                                                                    |
+| Packagist    | `eliyce/laravel-media-pro` | Root `composer.json`; `.gitattributes` export-ignore keeps JS and dev files out of the archive; releases come from the shared `vX.Y.Z` tags (TD-17) |
