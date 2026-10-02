@@ -363,6 +363,34 @@ composer test   # PHPUnit suite for the Laravel package
 Run both before you push. Releases use [Changesets](https://github.com/changesets/changesets):
 run `npm run changeset` for every user-facing change.
 
+## Releasing
+
+### Prerequisites
+
+- An npm account with publish rights to the `@eliyce` scope: either an npm organization named
+  `eliyce` that you belong to, or the npm user `eliyce` itself.
+- Run `npm login` once on the release machine. If the account has two-factor authentication on,
+  npm asks for a one-time password when you publish.
+
+### Publish the npm package
+
+1. For each user-facing change, run `npm run changeset` and commit the generated file.
+2. Run `npm run version-packages`. It runs `changeset version`, which bumps
+   `package.json#version`, writes `CHANGELOG.md` and removes the used changesets. `VERSION` is
+   read from `package.json` at build time, so no other file needs a bump.
+3. Commit the version bump.
+4. Run `npm run release`. It runs the full `npm run check`, then `changeset publish`, which
+   publishes `@eliyce/media-pro` with public access (from `publishConfig`) and creates the git
+   tag `vX.Y.Z`.
+5. Push the commit and the tag: `git push --follow-tags`.
+
+### Publish the composer package
+
+Packagist reads releases from git tags. Submit the repository URL once on
+[packagist.org](https://packagist.org/packages/submit) as `eliyce/laravel-media-pro`; after that,
+every pushed `vX.Y.Z` tag becomes a release. The tag from step 4 is the npm version, so both
+packages share version numbers.
+
 ## License
 
-MIT
+MIT, © Eliyce. See [LICENSE](LICENSE).

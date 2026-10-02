@@ -5,7 +5,6 @@
 First release of the media upload components, compatible with the Spatie Media Library Pro v6
 React API.
 
-- **Breaking (pre-release rename):** the package is now `@eliyce/media-pro` (was `media-pro`).
 - **`@eliyce/media-pro/core`** (also re-exported from `@eliyce/media-pro`): the
   framework-agnostic `MediaLibrary` store. It validates files before upload (`accept` with mime
   types, `image/*` wildcards and `.ext` entries, plus min and max size), uploads with progress
