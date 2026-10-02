@@ -166,7 +166,7 @@ describe('built package', () => {
     }
   });
 
-  it('packs only the build, styles and docs (AC-66)', () => {
+  it('packs only the build, styles and docs, including the licence (AC-66, AC-71)', () => {
     const output = execFileSync('npm', ['pack', '--dry-run', '--json', '--silent'], {
       cwd: root,
       encoding: 'utf8',
@@ -174,7 +174,9 @@ describe('built package', () => {
     const [report] = JSON.parse(output) as Array<{ files: Array<{ path: string }> }>;
     const files = report!.files.map((file) => file.path);
 
-    expect(files).toEqual(expect.arrayContaining(['package.json', 'styles/media-pro.css']));
+    expect(files).toEqual(
+      expect.arrayContaining(['package.json', 'styles/media-pro.css', 'LICENSE', 'README.md']),
+    );
     for (const file of files) {
       expect(
         /^(package\.json|README\.md|LICENSE|CHANGELOG\.md)$/.test(file) ||
@@ -197,5 +199,23 @@ describe('built package', () => {
     });
     expect(manifest.files).toEqual(['dist', 'styles']);
     expect(manifest.sideEffects).toEqual(['**/*.css']);
+  });
+
+  it('licenses both packages under MIT to Eliyce (AC-71)', () => {
+    const licence = readFileSync(resolve(root, 'LICENSE'), 'utf8');
+    expect(licence.startsWith('MIT License\n')).toBe(true);
+    expect(licence).toContain('Copyright (c) 2026 Eliyce');
+    expect(licence).toContain('Permission is hereby granted, free of charge');
+    expect(licence).toContain('THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND');
+
+    expect(pkg.license).toBe('MIT');
+    expect(pkg.author).toBe('Eliyce <haider@eliyce.com>');
+
+    const composer = JSON.parse(readFileSync(resolve(root, 'composer.json'), 'utf8')) as {
+      license: string;
+      authors: Array<{ name: string; email?: string }>;
+    };
+    expect(composer.license).toBe('MIT');
+    expect(composer.authors).toContainEqual({ name: 'Eliyce', email: 'haider@eliyce.com' });
   });
 });

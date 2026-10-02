@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Media upload components for Laravel apps: a framework-agnostic core, React components and Tailwind styles, compatible with the Spatie Media Library Pro v6 API.",
   "license": "MIT",
-  "author": "",
+  "author": "Eliyce <haider@eliyce.com>",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

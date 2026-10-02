@@ -12,7 +12,8 @@
     ],
     "authors": [
         {
-            "name": "Eliyce"
+            "name": "Eliyce",
+            "email": "haider@eliyce.com"
         }
     ],
     "require": {
