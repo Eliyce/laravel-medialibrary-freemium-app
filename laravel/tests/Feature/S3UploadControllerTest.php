@@ -52,6 +52,25 @@ class S3UploadControllerTest extends TestCase
         $this->assertTrue(Storage::disk('s3')->exists($media->getPathRelativeToRoot()));
     }
 
+    /** AC-78: the s3 disk is private (no `visibility: public`) and can sign URLs. */
+    public function test_a_private_disk_returns_signed_preview_and_original_urls(): void
+    {
+        $this->freezeTime();
+        $uuid = (string) Str::uuid();
+
+        $response = $this->postJson('/media-library-pro/s3', [
+            'key' => 'tmp/abc',
+            'uuid' => $uuid,
+            'name' => 'photo.png',
+            'content_type' => 'image/png',
+        ])->assertOk();
+
+        $media = Media::sole();
+        $expiration = now()->addMinutes(60)->getTimestamp();
+        $this->assertSame(url($media->getPathRelativeToRoot('preview').'?expiration='.$expiration), $response->json('preview_url'));
+        $this->assertSame(url($media->getPathRelativeToRoot().'?expiration='.$expiration), $response->json('original_url'));
+    }
+
     /**
      * @return array<string, array{string}>
      */

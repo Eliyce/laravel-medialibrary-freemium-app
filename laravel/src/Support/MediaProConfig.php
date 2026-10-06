@@ -4,6 +4,7 @@ namespace Eliyce\MediaPro\Support;
 
 use Eliyce\MediaPro\Models\TemporaryUpload;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -52,6 +53,42 @@ class MediaProConfig
         }
 
         return $disk;
+    }
+
+    /**
+     * How long signed URLs for files on a private disk stay valid; null when
+     * signing is turned off.
+     */
+    public static function signedUrlExpirationMinutes(): ?int
+    {
+        $minutes = Config::get('media-pro.signed_url_expiration_minutes', 60);
+
+        if ($minutes === null) {
+            return null;
+        }
+
+        if (! is_numeric($minutes) || (int) $minutes < 1) {
+            throw new InvalidArgumentException('media-pro.signed_url_expiration_minutes must be a positive number of minutes or null.');
+        }
+
+        return (int) $minutes;
+    }
+
+    /**
+     * Whether files on this disk need a signed URL to be readable: signing is
+     * on, the disk's visibility is not `public` and the disk can sign URLs.
+     */
+    public static function diskNeedsSignedUrls(string $disk): bool
+    {
+        if (static::signedUrlExpirationMinutes() === null) {
+            return false;
+        }
+
+        if (Config::get("filesystems.disks.{$disk}.visibility") === 'public') {
+            return false;
+        }
+
+        return Storage::disk($disk)->providesTemporaryUrls();
     }
 
     /**

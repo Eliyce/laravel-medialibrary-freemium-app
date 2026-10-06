@@ -24,7 +24,7 @@ class MediaProValue
             'name' => (string) $media->name,
             'file_name' => (string) $media->file_name,
             'preview_url' => static::previewUrl($media),
-            'original_url' => $media->getUrl(),
+            'original_url' => static::url($media),
             'size' => (int) $media->size,
             'mime_type' => $media->mime_type,
             'extension' => strtolower((string) $media->extension),
@@ -60,13 +60,29 @@ class MediaProValue
     public static function previewUrl(Media $media): ?string
     {
         if ($media->hasGeneratedConversion(TemporaryUpload::PREVIEW_CONVERSION)) {
-            return $media->getUrl(TemporaryUpload::PREVIEW_CONVERSION);
+            return static::url($media, TemporaryUpload::PREVIEW_CONVERSION);
         }
 
         if (str_starts_with((string) $media->mime_type, 'image/')) {
-            return $media->getUrl();
+            return static::url($media);
         }
 
         return null;
+    }
+
+    /**
+     * The URL of the original (or a conversion): a temporary signed URL when
+     * the disk holding the file is private, else the plain URL.
+     */
+    protected static function url(Media $media, string $conversion = ''): string
+    {
+        $disk = $conversion === '' ? $media->disk : ($media->conversions_disk ?: $media->disk);
+        $minutes = MediaProConfig::signedUrlExpirationMinutes();
+
+        if ($minutes !== null && MediaProConfig::diskNeedsSignedUrls((string) $disk)) {
+            return $media->getTemporaryUrl(now()->addMinutes($minutes), $conversion);
+        }
+
+        return $media->getUrl($conversion);
     }
 }

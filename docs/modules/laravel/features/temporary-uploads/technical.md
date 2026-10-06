@@ -85,6 +85,10 @@ name, diskName, ?fileName)`: both go through `storeAtomically()`. An empty name 
   where `custom_properties` is an `ArrayObject` so an empty set encodes as `{}`.
 - `previewUrl(Media)`: the generated `preview` conversion URL, else the original URL for
   `image/*`, else `null`.
+- Every URL goes through the protected `url(Media, conversion)`: when
+  `MediaProConfig::diskNeedsSignedUrls()` holds for the disk that holds the file (the conversions
+  disk for the preview), it returns `getTemporaryUrl(now() + signed_url_expiration_minutes)`,
+  else `getUrl()`.
 
 ## Testing Entry Points
 
@@ -95,9 +99,12 @@ name, diskName, ?fileName)`: both go through `storeAtomically()`. An empty name 
 - `laravel/tests/Feature/S3UploadControllerTest.php`: valid `tmp/` key, invalid keys (data
   provider), disallowed content, oversize, plain-text extensions kept, contradicting extension
   dropped, uuid race (including the pre-10.20 `QueryException` path via
-  `laravel/tests/Support/LegacyTemporaryUpload.php`), uuid uniqueness.
+  `laravel/tests/Support/LegacyTemporaryUpload.php`), uuid uniqueness, signed URLs on a private
+  disk.
 - `laravel/tests/Feature/TemporaryUploadTest.php`: `findByMediaUuid` in any session, unknown
   uuids and other models' media; `findByMediaUuidInCurrentSession` session scoping.
 - `laravel/tests/Unit/UniqueConstraintViolationTest.php`: per-driver SQLSTATE, code and message
   cases (unique matches, NOT NULL and foreign key do not) and the 10.20+ exception class.
-- `laravel/tests/Feature/MediaProValueTest.php`.
+- `laravel/tests/Feature/MediaProValueTest.php`: value shape and order; signed URLs on a private
+  signing disk, plain URLs on a public disk, with signing off, or on a disk that cannot sign;
+  invalid expiry.

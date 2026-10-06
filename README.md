@@ -208,7 +208,8 @@ The keys are Spatie's (`fileTypeNotAllowed`, `tooLarge`, `selectOrDragMax`, ...)
 The browser sends the file straight to S3 through Vapor's signed storage URL
 (`vaporSignedStorageUrl`, default `vapor/signed-storage-url`, served by `laravel/vapor-core`).
 The component then registers the stored `tmp/` key with `POST /media-library-pro/s3`. Set
-`media-pro.temporary_upload_disk` to your S3 disk.
+`media-pro.temporary_upload_disk` to your S3 disk. A private bucket works as is: see
+[private disks](#security).
 
 ### Uploads on another domain or prefix
 
@@ -328,6 +329,11 @@ $post->syncFromMediaLibraryRequest($request->validated('images'))
   ```php
   RateLimiter::for('media-pro-uploads', fn (Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
   ```
+
+- **Private disks.** When a file sits on a disk whose `visibility` is not `public` and that can
+  sign URLs, such as a private S3 bucket, `preview_url` and `original_url` are temporary signed
+  URLs. They last `media-pro.signed_url_expiration_minutes` (default 60). Set it to `null` to
+  always get plain URLs.
 
 - **Preview images** are a 500x500 crop. Change them from a service provider:
 

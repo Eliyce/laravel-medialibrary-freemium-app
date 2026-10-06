@@ -54,6 +54,7 @@ RateLimiter::for('media-pro-uploads', fn (Request $request) => Limit::perMinute(
 | `delete_temporary_uploads_older_than_hours` | `24`                              | Cleanup threshold                                                                |
 | `temporary_upload_disk`                     | `null`                            | `null` falls back to `media-library.disk_name`, then `'public'`                  |
 | `rate_limit_per_minute`                     | `10`                              | Per IP for the default limiter; at least 1                                       |
+| `signed_url_expiration_minutes`             | `60`                              | Signed `preview_url`/`original_url` lifetime on private disks; `null` disables   |
 
 ## Publish tags
 

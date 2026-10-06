@@ -2,10 +2,16 @@
 
 namespace Eliyce\MediaPro\Tests\Feature;
 
+use DateTimeInterface;
 use Eliyce\MediaPro\Support\MediaProValue;
 use Eliyce\MediaPro\Tests\Support\TestModel;
 use Eliyce\MediaPro\Tests\TestCase;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaProValueTest extends TestCase
 {
@@ -70,5 +76,106 @@ class MediaProValueTest extends TestCase
             'mime_type' => 'image/png',
             'extension' => 'png',
         ], MediaProValue::fromMedia($media));
+    }
+
+    /** AC-73 */
+    public function test_media_on_a_private_signing_disk_gets_signed_urls_with_the_configured_expiry(): void
+    {
+        $this->freezeTime();
+        config()->set('media-pro.signed_url_expiration_minutes', 15);
+        $this->fakeSigningDisk('private');
+
+        $media = $this->imageOn('private');
+        $value = MediaProValue::fromMedia($media);
+
+        $expires = now()->addMinutes(15)->getTimestamp();
+        $this->assertSame("https://signed.test/{$media->getPathRelativeToRoot('preview')}?expires={$expires}", $value['preview_url']);
+        $this->assertSame("https://signed.test/{$media->getPathRelativeToRoot()}?expires={$expires}", $value['original_url']);
+    }
+
+    /** AC-74 */
+    public function test_media_on_a_public_disk_keeps_plain_urls(): void
+    {
+        $this->fakeSigningDisk('private', 'public');
+
+        $media = $this->imageOn('private');
+        $value = MediaProValue::fromMedia($media);
+
+        $this->assertSame($media->getUrl('preview'), $value['preview_url']);
+        $this->assertSame($media->getUrl(), $value['original_url']);
+    }
+
+    /** AC-75 */
+    public function test_signing_turned_off_keeps_plain_urls(): void
+    {
+        config()->set('media-pro.signed_url_expiration_minutes', null);
+        $this->fakeSigningDisk('private');
+
+        $media = $this->imageOn('private');
+        $value = MediaProValue::fromMedia($media);
+
+        $this->assertSame($media->getUrl('preview'), $value['preview_url']);
+        $this->assertSame($media->getUrl(), $value['original_url']);
+    }
+
+    /** AC-76 */
+    public function test_a_private_disk_that_cannot_sign_keeps_plain_urls(): void
+    {
+        // A real local disk without `serve` (Storage::fake() always installs a URL signer).
+        $root = sys_get_temp_dir().'/media-pro-unsigned-'.getmypid();
+        config()->set('filesystems.disks.private', ['driver' => 'local', 'root' => $root]);
+        $this->assertFalse(Storage::disk('private')->providesTemporaryUrls());
+
+        try {
+            $media = $this->imageOn('private');
+            $value = MediaProValue::fromMedia($media);
+
+            $this->assertSame($media->getUrl('preview'), $value['preview_url']);
+            $this->assertSame($media->getUrl(), $value['original_url']);
+        } finally {
+            (new Filesystem)->deleteDirectory($root);
+        }
+    }
+
+    /**
+     * @return array<string, array{int|string}>
+     */
+    public static function invalidExpirations(): array
+    {
+        return ['zero' => [0], 'negative' => [-5], 'not a number' => ['soon']];
+    }
+
+    /** AC-77 */
+    #[DataProvider('invalidExpirations')]
+    public function test_an_invalid_expiry_throws_naming_the_config_key(int|string $minutes): void
+    {
+        $media = $this->imageOn('public');
+        config()->set('media-pro.signed_url_expiration_minutes', $minutes);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('media-pro.signed_url_expiration_minutes');
+
+        MediaProValue::fromMedia($media);
+    }
+
+    protected function fakeDisk(string $disk, ?string $visibility = null): void
+    {
+        config()->set("filesystems.disks.{$disk}", array_filter(['driver' => 'local', 'visibility' => $visibility]));
+        Storage::fake($disk);
+    }
+
+    protected function fakeSigningDisk(string $disk, ?string $visibility = null): void
+    {
+        $this->fakeDisk($disk, $visibility);
+        Storage::disk($disk)->buildTemporaryUrlsUsing(
+            fn (string $path, DateTimeInterface $expiration): string => "https://signed.test/{$path}?expires={$expiration->getTimestamp()}"
+        );
+    }
+
+    protected function imageOn(string $disk): Media
+    {
+        return TestModel::create()
+            ->addMedia(UploadedFile::fake()->image('photo.png', 20, 20))
+            ->toMediaCollection('images', $disk);
     }
 }

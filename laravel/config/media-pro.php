@@ -35,6 +35,14 @@ return [
     'temporary_upload_disk' => null,
 
     /*
+     * Files on a private disk get temporary signed URLs (`preview_url` and
+     * `original_url`) valid for this many minutes. A disk is private when its
+     * `visibility` is not `public` and it can sign URLs, like a private S3
+     * bucket. Set to null to always return plain URLs.
+     */
+    'signed_url_expiration_minutes' => 60,
+
+    /*
      * Uploads allowed per minute per IP address by the default
      * `media-pro-uploads` rate limiter. Define your own limiter with that name
      * to replace it entirely.

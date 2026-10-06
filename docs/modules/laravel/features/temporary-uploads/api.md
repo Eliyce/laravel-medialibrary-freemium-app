@@ -58,6 +58,9 @@ After validation the controller checks, in order: the key exists on the disk, it
 ```
 
 `preview_url` is the `preview` conversion, else the original URL for images, else `null`.
+On a private disk (its `visibility` is not `public` and it can sign URLs, such as a private S3
+bucket), `preview_url` and `original_url` are temporary signed URLs valid for
+`media-pro.signed_url_expiration_minutes` (default 60). Set it to `null` for plain URLs.
 `extension` is lowercase.
 
 422 keys and messages besides the standard rule messages:

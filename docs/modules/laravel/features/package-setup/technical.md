@@ -38,6 +38,8 @@ Every config read goes through this class (RULE-11 canonical helper):
 | `maxFileSizeInKb()`      | `media-pro.max_file_size_in_kb` ?? `media-library.max_file_size / 1024` (default 10 MB) |
 | `deleteOlderThanHours()` | int, default 24                                                                         |
 | `rateLimitPerMinute()`   | int, at least 1                                                                         |
+| `signedUrlExpirationMinutes()` | `media-pro.signed_url_expiration_minutes` (default 60) or `null`; below 1 throws |
+| `diskNeedsSignedUrls($disk)`   | Signing on, disk `visibility` is not `public`, and the disk `providesTemporaryUrls()` |
 
 ## Migration
 
