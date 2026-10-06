@@ -1,6 +1,6 @@
 # useMediaLibrary API
 
-Source: `src/react/use-media-library.ts`. Exported from `@eliyce/media-pro/react`.
+Source: `src/react/use-media-library.ts`. Exported from `@eliyce/laravel-medialibrary-freemium-app/react`.
 
 ## Signature
 

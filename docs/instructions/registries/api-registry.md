@@ -3,17 +3,17 @@
 The public API of both packages in this repo. Removing or changing any row is a breaking change
 (major bump; before 1.0, a minor flagged as breaking in the changeset).
 
-## npm `@eliyce/media-pro`
+## npm `@eliyce/laravel-medialibrary-freemium-app`
 
 ### Entry points
 
-| Specifier                        | ESM                    | CJS              | Types                                  | Contents                   |
-| -------------------------------- | ---------------------- | ---------------- | -------------------------------------- | -------------------------- |
-| `@eliyce/media-pro`              | `dist/index.js`        | `dist/index.cjs` | `dist/index.d.ts` / `dist/index.d.cts` | `VERSION` + core API       |
-| `@eliyce/media-pro/core`         | `dist/core.js`         | `dist/core.cjs`  | `dist/core.d.ts` / `dist/core.d.cts`   | Core API                   |
-| `@eliyce/media-pro/react`        | `dist/react.js`        | `dist/react.cjs` | `dist/react.d.ts` / `dist/react.d.cts` | React API (`"use client"`) |
-| `@eliyce/media-pro/styles.css`   | `styles/media-pro.css` | same             | n/a                                    | Tailwind source styles     |
-| `@eliyce/media-pro/package.json` | `package.json`         | same             | n/a                                    | Manifest                   |
+| Specifier                                                | ESM                    | CJS              | Types                                  | Contents                   |
+| -------------------------------------------------------- | ---------------------- | ---------------- | -------------------------------------- | -------------------------- |
+| `@eliyce/laravel-medialibrary-freemium-app`              | `dist/index.js`        | `dist/index.cjs` | `dist/index.d.ts` / `dist/index.d.cts` | `VERSION` + core API       |
+| `@eliyce/laravel-medialibrary-freemium-app/core`         | `dist/core.js`         | `dist/core.cjs`  | `dist/core.d.ts` / `dist/core.d.cts`   | Core API                   |
+| `@eliyce/laravel-medialibrary-freemium-app/react`        | `dist/react.js`        | `dist/react.cjs` | `dist/react.d.ts` / `dist/react.d.cts` | React API (`"use client"`) |
+| `@eliyce/laravel-medialibrary-freemium-app/styles.css`   | `styles/media-pro.css` | same             | n/a                                    | Tailwind source styles     |
+| `@eliyce/laravel-medialibrary-freemium-app/package.json` | `package.json`         | same             | n/a                                    | Manifest                   |
 
 ### Core exports (`.` and `./core`)
 
@@ -92,7 +92,7 @@ Registered by `Route::mediaLibrary(string $prefix = 'media-library-pro')`, behin
 The client's Vapor step 1 calls the app's `vapor/signed-storage-url` route (from
 `laravel/vapor-core`, not this package).
 
-## Composer `eliyce/laravel-media-pro`
+## Composer `eliyce/laravel-medialibrary-freemium-app`
 
 | Symbol                                                                                                                                                                                                                                                                                                                                          | Kind                               | Docs                                                                         |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------- |

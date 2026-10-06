@@ -1,8 +1,8 @@
 # Upload Transport API
 
 Source: `src/core/upload.ts`, `src/core/csrf.ts`, `src/core/uuid.ts`, `src/core/types.ts`.
-`getCsrfHeaders`, `generateUuid` and the types are exported from `@eliyce/media-pro` and
-`@eliyce/media-pro/core`; the upload functions themselves are internal and run through
+`getCsrfHeaders`, `generateUuid` and the types are exported from `@eliyce/laravel-medialibrary-freemium-app` and
+`@eliyce/laravel-medialibrary-freemium-app/core`; the upload functions themselves are internal and run through
 `MediaLibrary`.
 
 ## Exports

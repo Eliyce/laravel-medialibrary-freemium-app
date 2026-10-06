@@ -4,7 +4,7 @@ The repo holds two publishable packages: an npm library written in TypeScript (p
 `node-library`) and a Laravel package written in PHP. See
 [architecture overview](../architecture/overview.md) for how they fit together.
 
-## npm: `@eliyce/media-pro`
+## npm: `@eliyce/laravel-medialibrary-freemium-app`
 
 | Aspect          | Value                                                                          |
 | --------------- | ------------------------------------------------------------------------------ |
@@ -18,10 +18,10 @@ The repo holds two publishable packages: an npm library written in TypeScript (p
 | Build           | tsup 8 (esbuild + rollup-plugin-dts), three entries, custom plugins            |
 | Tests           | Vitest 5 (node and jsdom), Testing Library, coverage via `@vitest/coverage-v8` |
 | Lint / format   | ESLint 10 flat config + typescript-eslint, Prettier 3                          |
-| Release         | Changesets (`@changesets/cli`)                                                 |
+| Release         | Changesets versioning on `main`; `release.yml` publishes from `production`     |
 | Runtime deps    | None                                                                           |
 
-## Composer: `eliyce/laravel-media-pro`
+## Composer: `eliyce/laravel-medialibrary-freemium-app`
 
 | Aspect          | Value                                                                       |
 | --------------- | --------------------------------------------------------------------------- |
@@ -31,7 +31,10 @@ The repo holds two publishable packages: an npm library written in TypeScript (p
 | Autoload        | PSR-4 `Eliyce\MediaPro\` → `laravel/src/`                                   |
 | Package manager | Composer 2 (`composer.lock` committed for development)                      |
 | Tests           | PHPUnit 10.5/11 with orchestra/testbench, sqlite `:memory:`                 |
-| Release         | Packagist from the repo root; shares the `vX.Y.Z` npm tags (TD-17)          |
+| Release         | Private Packagist from the repo root; reads the shared `vX.Y.Z` tags        |
+
+CI and releases run in GitHub Actions (`.github/workflows/ci.yml` and `release.yml`); see
+[tooling.md](tooling.md#github-actions).
 
 Detected traits: `typescript`, `vitest`, `eslint`, `publishable` (see
 `.paqad/detection-report.json`). paqad's detection does not model the PHP half; these docs do.

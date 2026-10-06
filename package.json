@@ -1,5 +1,5 @@
 {
-  "name": "@eliyce/media-pro",
+  "name": "@eliyce/laravel-medialibrary-freemium-app",
   "version": "0.0.0",
   "description": "Media upload components for Laravel apps: a framework-agnostic core, React components and Tailwind styles, compatible with the Spatie Media Library Pro v6 API.",
   "license": "MIT",

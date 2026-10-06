@@ -1,0 +1,27 @@
+{
+  "id": "D-01M48PH8J7HM3BCRB3C9MM17EA",
+  "category": "spec.change",
+  "title": "Laravel 10 CI job blocked by Composer security advisories",
+  "context": "Composer 2.9.5 refuses every Laravel 10.x release (security advisories), so the L10 CI leg with block-insecure on is always red and release can never pass CI. With block-insecure off it passes 149/149.",
+  "options": [
+    {
+      "option_key": "allow-insecure",
+      "label": "Turn off block-insecure for the L10 test job, like L11 (test-only; apps still decide for themselves)"
+    },
+    {
+      "option_key": "drop-from-ci",
+      "label": "Remove the L10 job from CI; Laravel 10 stays supported but untested in CI"
+    },
+    {
+      "option_key": "drop-support",
+      "label": "Drop Laravel 10 from composer.json support range (breaking for L10 users)"
+    }
+  ],
+  "recommendation": "allow-insecure",
+  "created_at": "2026-10-06T13:30:32.391Z",
+  "status": "resolved",
+  "change": "01M48MCZKAF94904WDEEAKNNA8",
+  "chosen": "allow-insecure",
+  "rationale": "Developer chose to allow insecure Laravel 10 releases in the CI test job only, matching Laravel 11",
+  "resolved_at": "2026-10-06T14:57:46.294Z"
+}

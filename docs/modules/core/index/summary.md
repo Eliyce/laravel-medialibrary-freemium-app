@@ -1,6 +1,6 @@
 # Core Summary
 
-Core is the framework-agnostic half of `@eliyce/media-pro`. It owns the observable
+Core is the framework-agnostic half of `@eliyce/laravel-medialibrary-freemium-app`. It owns the observable
 `MediaLibrary` store behind every media component, the upload transport (direct and Vapor), client
 validation, Laravel error mapping, translations, and the package entry points. Core imports no
 React and touches no DOM API at module scope, so the React binding (and later Vue or Livewire
@@ -25,17 +25,17 @@ bindings) reuse it unchanged.
 
 ## Public Surface
 
-| Specifier                        | Exposes                          |
-| -------------------------------- | -------------------------------- |
-| `@eliyce/media-pro`              | `VERSION` plus every core export |
-| `@eliyce/media-pro/core`         | The core API (no `VERSION`)      |
-| `@eliyce/media-pro/package.json` | The manifest                     |
+| Specifier                                                | Exposes                          |
+| -------------------------------------------------------- | -------------------------------- |
+| `@eliyce/laravel-medialibrary-freemium-app`              | `VERSION` plus every core export |
+| `@eliyce/laravel-medialibrary-freemium-app/core`         | The core API (no `VERSION`)      |
+| `@eliyce/laravel-medialibrary-freemium-app/package.json` | The manifest                     |
 
 Core exports `MediaLibrary`, `defaultTranslations`, `resolveTranslations`, `translate`,
 `normalizeValue`, `mapValidationErrors`, `validateFile`, `describeAccept`, `getCsrfHeaders`,
 `generateUuid`, and the types listed in the
 [API registry](../../../instructions/registries/api-registry.md). Deep imports
-(`@eliyce/media-pro/dist/...`) are blocked by the `exports` map.
+(`@eliyce/laravel-medialibrary-freemium-app/dist/...`) are blocked by the `exports` map.
 
 ## Dependencies
 

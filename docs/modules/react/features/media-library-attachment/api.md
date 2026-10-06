@@ -1,12 +1,12 @@
 # MediaLibraryAttachment API
 
 Source: `src/react/MediaLibraryAttachment.tsx`, `src/react/props.ts`. Exported from
-`@eliyce/media-pro/react` (a `"use client"` module).
+`@eliyce/laravel-medialibrary-freemium-app/react` (a `"use client"` module).
 
 ## Usage
 
 ```tsx
-import { MediaLibraryAttachment } from '@eliyce/media-pro/react';
+import { MediaLibraryAttachment } from '@eliyce/laravel-medialibrary-freemium-app/react';
 
 <MediaLibraryAttachment
   name="avatar"

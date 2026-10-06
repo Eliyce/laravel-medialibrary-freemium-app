@@ -1,6 +1,6 @@
 # Laravel Summary
 
-Laravel is the server half: the composer package `eliyce/laravel-media-pro` (namespace
+Laravel is the server half: the composer package `eliyce/laravel-medialibrary-freemium-app` (namespace
 `Eliyce\MediaPro`). It stores files the components upload as temporary uploads, serves the upload
 endpoints, moves submitted media into model collections, and validates media fields. It builds on
 `spatie/laravel-medialibrary` v11 and replaces the server side of the commercial Spatie Media
@@ -51,19 +51,20 @@ Details are in the [API registry](../../../instructions/registries/api-registry.
 ## Tests
 
 `composer test` runs PHPUnit (`laravel/tests/Unit`, `laravel/tests/Feature`) on sqlite
-`:memory:` with faked disks and no network. The suite passes on Laravel 13 locally and was
-verified on 10, 11 and 12. paqad's checks run only the npm commands, so run `composer test`
-alongside them (TD-9).
+`:memory:` with faked disks and no network. The suite passes on Laravel 13 locally. CI
+(`.github/workflows/ci.yml`) runs it on the latest Laravel 10, 11, 12 and 13 releases on PHP 8.2
+to 8.4, after `composer validate --strict`. paqad's checks run only the npm commands, so run
+`composer test` alongside them (TD-9).
 
 ## Known Gaps
 
-- TD-13: every Laravel 11.x release has security advisories, so installs on 11 may need
-  `audit.block-insecure=false`.
-- TD-5: no CI matrix for Laravel 10 to 13.
-- TD-19: no CI job exercises the Laravel 10.x paths (the `ValidatesMedia` fallback below 10.43
-  and the pre-10.20 uuid-race detection); they are covered by local runs and simulation only.
-- TD-17: Packagist releases reuse the npm `vX.Y.Z` tags, so both packages share version
-  numbers; the scheme is not yet confirmed.
+- TD-13: every Laravel 10.x and 11.x release has security advisories, so installs on 10 or 11
+  may need `audit.block-insecure=false`. The Laravel 10 and 11 CI legs turn it off.
+- TD-19: CI runs only the latest 10.x release, so no job exercises the Laravel 10.x paths (the
+  `ValidatesMedia` fallback below 10.43 and the pre-10.20 uuid-race detection); they are
+  covered by local runs and simulation only.
+- Releases: Private Packagist reads the shared `vX.Y.Z` tag that the release workflow pushes,
+  so both packages share one version number (TD-17, confirmed; AD-15).
 
 ## Related Docs
 

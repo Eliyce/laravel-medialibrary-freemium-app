@@ -1,7 +1,7 @@
 # Validation and Errors API
 
 Source: `src/core/validation.ts`, `src/core/errors.ts`, `src/core/types.ts`. Exported from
-`@eliyce/media-pro` and `@eliyce/media-pro/core`.
+`@eliyce/laravel-medialibrary-freemium-app` and `@eliyce/laravel-medialibrary-freemium-app/core`.
 
 ## Exports
 

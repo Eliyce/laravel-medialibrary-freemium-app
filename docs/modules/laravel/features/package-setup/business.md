@@ -6,7 +6,7 @@ Everything an app does once to use Media Pro on the server: install the package,
 `temporary_uploads` table, register the upload routes and, optionally, tune the config.
 
 ```bash
-composer require eliyce/laravel-media-pro
+composer require eliyce/laravel-medialibrary-freemium-app
 php artisan vendor:publish --tag=media-pro-migrations && php artisan migrate
 php artisan vendor:publish --tag=media-pro-config   # optional
 ```

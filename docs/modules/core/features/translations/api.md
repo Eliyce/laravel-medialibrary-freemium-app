@@ -1,7 +1,7 @@
 # Translations API
 
-Source: `src/core/translations.ts`, `src/core/types.ts`. Exported from `@eliyce/media-pro` and
-`@eliyce/media-pro/core`.
+Source: `src/core/translations.ts`, `src/core/types.ts`. Exported from `@eliyce/laravel-medialibrary-freemium-app` and
+`@eliyce/laravel-medialibrary-freemium-app/core`.
 
 ## Exports
 
@@ -12,7 +12,7 @@ Source: `src/core/translations.ts`, `src/core/types.ts`. Exported from `@eliyce/
 | `translate`           | `(translations: Translations, key: TranslationKey, replacements?: Record<string, string \| number>) => string` |
 
 ```ts
-import { resolveTranslations, translate } from '@eliyce/media-pro/core';
+import { resolveTranslations, translate } from '@eliyce/laravel-medialibrary-freemium-app/core';
 
 const t = resolveTranslations({ selectOrDrag: 'Choose files', file: { plural: 'images' } });
 translate(t, 'selectOrDragMax', { maxItems: 3, file: t.file.plural }); // "Select or drag max 3 images"

@@ -8,7 +8,7 @@ the form submits. The React components are a view over it, and other frameworks 
 directly.
 
 ```ts
-import { MediaLibrary } from '@eliyce/media-pro/core';
+import { MediaLibrary } from '@eliyce/laravel-medialibrary-freemium-app/core';
 
 const library = new MediaLibrary({ name: 'images', maxItems: 5, onChange: save });
 const unsubscribe = library.subscribe(() => render(library.getState()));

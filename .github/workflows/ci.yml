@@ -1,0 +1,135 @@
+# Runs the same gates as local delivery: `npm run check` (typecheck, lint, format check, tests,
+# build), `npm audit` at high, the JS suite against React 18, and `composer test` on every
+# supported Laravel major. The release workflow calls this file through `workflow_call`.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Never cancel on production: the release workflow calls this file there.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/production' }}
+
+defaults:
+  run:
+    # bash -eo pipefail
+    shell: bash
+
+jobs:
+  npm:
+    name: npm check (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck, lint, format check, test and build
+        run: npm run check
+
+      - name: Audit dependencies (high and critical)
+        run: npm audit --audit-level=high
+
+  npm-react18:
+    name: npm test (React 18)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Swap in React 18
+        run: npm install --no-save react@18 react-dom@18
+
+      - name: Test
+        run: npm test
+
+  composer:
+    name: composer test (Laravel ${{ matrix.laravel }}, PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Every Laravel 10.x release has a published advisory (TD-13, D-01M48PH8J7HM3BCRB3C9MM17EA).
+          - php: '8.2'
+            laravel: '10.*'
+            testbench: '8.*'
+            block-insecure: false
+          # Every Laravel 11.x release has a published advisory (TD-13).
+          - php: '8.2'
+            laravel: '11.*'
+            testbench: '9.*'
+            block-insecure: false
+          - php: '8.3'
+            laravel: '12.*'
+            testbench: '10.*'
+            block-insecure: true
+          - php: '8.4'
+            laravel: '13.*'
+            testbench: '11.*'
+            block-insecure: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          extensions: fileinfo, pdo_sqlite
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      # Test-only: apps still decide for themselves whether to install these releases.
+      - name: Allow Laravel releases with published advisories
+        if: matrix.block-insecure == false
+        run: composer config audit.block-insecure false
+
+      - name: Pin Laravel ${{ matrix.laravel }} and Testbench ${{ matrix.testbench }}
+        env:
+          LARAVEL: ${{ matrix.laravel }}
+          TESTBENCH: ${{ matrix.testbench }}
+        run: |
+          composer require "laravel/framework:${LARAVEL}" --no-update --no-interaction
+          composer require --dev "orchestra/testbench:${TESTBENCH}" --no-update --no-interaction
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --with-all-dependencies
+
+      # PackagingTest asserts the committed constraints, so put the manifest back before testing.
+      - name: Restore composer.json
+        run: git checkout -- composer.json
+
+      - name: Test
+        run: composer test

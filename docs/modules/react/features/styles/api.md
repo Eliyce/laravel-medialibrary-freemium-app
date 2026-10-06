@@ -2,16 +2,16 @@
 
 ## Entry
 
-| Specifier                      | File                   | Kind                |
-| ------------------------------ | ---------------------- | ------------------- |
-| `@eliyce/media-pro/styles.css` | `styles/media-pro.css` | Tailwind CSS source |
+| Specifier                                              | File                   | Kind                |
+| ------------------------------------------------------ | ---------------------- | ------------------- |
+| `@eliyce/laravel-medialibrary-freemium-app/styles.css` | `styles/media-pro.css` | Tailwind CSS source |
 
 Import it after Tailwind in the stylesheet Tailwind processes. The file has no
 `@import 'tailwindcss'` of its own.
 
 ```css
 @import 'tailwindcss';
-@import '@eliyce/media-pro/styles.css';
+@import '@eliyce/laravel-medialibrary-freemium-app/styles.css';
 ```
 
 ## Contract

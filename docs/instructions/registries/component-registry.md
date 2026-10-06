@@ -1,7 +1,7 @@
 # Component Registry
 
-React components exported from `@eliyce/media-pro/react`. Every component renders
-`media-library-*` classes styled by `@eliyce/media-pro/styles.css`. The design system holds only
+React components exported from `@eliyce/laravel-medialibrary-freemium-app/react`. Every component renders
+`media-library-*` classes styled by `@eliyce/laravel-medialibrary-freemium-app/styles.css`. The design system holds only
 placeholder tokens (TD-10), so the styles use Tailwind's default palette.
 
 | Component                | Module | Props type                    | Description                                                                           |

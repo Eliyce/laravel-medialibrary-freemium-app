@@ -1,0 +1,23 @@
+{
+  "id": "D-01M48MD0GJH2MF4C8W5MAKCY7F",
+  "category": "architecture-path",
+  "title": "How a merge to production publishes",
+  "context": "npm versions come from changesets. Composer releases are git tags read by Packagist. The repo shares vX.Y.Z tags between both (TD-17).",
+  "options": [
+    {
+      "option_key": "version-on-main",
+      "label": "Run changeset version on main before merging; production publishes the package.json version to npm if not yet published, then tags vX.Y.Z (composer release)"
+    },
+    {
+      "option_key": "version-on-production",
+      "label": "Production runs changeset version itself, commits the bump back, publishes and tags"
+    }
+  ],
+  "recommendation": "version-on-main",
+  "created_at": "2026-10-06T12:53:15.923Z",
+  "status": "resolved",
+  "change": "01M48MCZKAF94904WDEEAKNNA8",
+  "chosen": "version-on-main",
+  "rationale": "Developer chose to version on main; production only publishes and tags",
+  "resolved_at": "2026-10-06T12:54:12.779Z"
+}

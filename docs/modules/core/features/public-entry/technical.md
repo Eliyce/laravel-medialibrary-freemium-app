@@ -13,15 +13,15 @@ Source imports use the `.js` extension (`./version.js`), as ESM resolution requi
 
 ## Public API
 
-| Specifier                        | Condition | Resolves to            | Types                   |
-| -------------------------------- | --------- | ---------------------- | ----------------------- |
-| `@eliyce/media-pro`              | `import`  | `dist/index.js`        | `dist/index.d.ts`       |
-| `@eliyce/media-pro`              | `require` | `dist/index.cjs`       | `dist/index.d.cts`      |
-| `@eliyce/media-pro/core`         | `import`  | `dist/core.js`         | `dist/core.d.ts`        |
-| `@eliyce/media-pro/core`         | `require` | `dist/core.cjs`        | `dist/core.d.cts`       |
-| `@eliyce/media-pro/react`        | both      | `dist/react.{js,cjs}`  | `dist/react.d.{ts,cts}` |
-| `@eliyce/media-pro/styles.css`   | any       | `styles/media-pro.css` | n/a                     |
-| `@eliyce/media-pro/package.json` | any       | `package.json`         | n/a                     |
+| Specifier                                                | Condition | Resolves to            | Types                   |
+| -------------------------------------------------------- | --------- | ---------------------- | ----------------------- |
+| `@eliyce/laravel-medialibrary-freemium-app`              | `import`  | `dist/index.js`        | `dist/index.d.ts`       |
+| `@eliyce/laravel-medialibrary-freemium-app`              | `require` | `dist/index.cjs`       | `dist/index.d.cts`      |
+| `@eliyce/laravel-medialibrary-freemium-app/core`         | `import`  | `dist/core.js`         | `dist/core.d.ts`        |
+| `@eliyce/laravel-medialibrary-freemium-app/core`         | `require` | `dist/core.cjs`        | `dist/core.d.cts`       |
+| `@eliyce/laravel-medialibrary-freemium-app/react`        | both      | `dist/react.{js,cjs}`  | `dist/react.d.{ts,cts}` |
+| `@eliyce/laravel-medialibrary-freemium-app/styles.css`   | any       | `styles/media-pro.css` | n/a                     |
+| `@eliyce/laravel-medialibrary-freemium-app/package.json` | any       | `package.json`         | n/a                     |
 
 `main` (`./dist/index.cjs`), `module` (`./dist/index.js`) and `types` (`./dist/index.d.ts`) are
 fallbacks for tools that ignore `exports`. Subpath exports are an owner-approved exception to the

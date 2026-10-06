@@ -8,7 +8,7 @@
 
 | Area              | Before                       | Now                                                                                             | Docs updated                          |
 | ----------------- | ---------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------- |
-| Package name      | `media-pro`                  | `@eliyce/media-pro` (scoped, D-01M3VMEYT0YET62N8Z9YQ278D8)                                      | all                                   |
+| Package name      | `media-pro`                  | `@eliyce/laravel-medialibrary-freemium-app` (scoped, D-01M3VMEYT0YET62N8Z9YQ278D8)              | all                                   |
 | Entry points      | `.` only                     | `.`, `./core`, `./react`, `./styles.css` (AD-7)                                                 | architecture, api-registry            |
 | Peer dependencies | none                         | `react`, `react-dom` `>=18`, optional                                                           | dependencies, version-rules           |
 | Dev dependencies  | 10 packages                  | + React 19, React types, jsdom 29, Testing Library (react, dom, user-event)                     | dependencies                          |

@@ -27,17 +27,20 @@ package.json#version ──(named JSON import)──▶ src/version.ts ──tsu
 `package.json#version` is the single source of truth (INV-13). esbuild's JSON loader exposes each
 top-level field as its own export and tree-shakes the rest, so the root entry's ESM and CJS
 outputs inline only `var version = "x.y.z"`. Nothing reads `package.json` at runtime.
-`@eliyce/media-pro/core` and `@eliyce/media-pro/react` do not export `VERSION`.
+`@eliyce/laravel-medialibrary-freemium-app/core` and `@eliyce/laravel-medialibrary-freemium-app/react` do not export `VERSION`.
 
 The source maps (`dist/index.*.map`) carry `package.json` in `sourcesContent`, like every other
 bundled source file. That is the same file the tarball already ships.
 
 ## Release Steps
 
-1. `npm run version-packages` (`changeset version`) bumps `package.json#version` and writes
-   `CHANGELOG.md`.
-2. `npm run release` runs `npm run check` (which rebuilds with the new version and runs the tests)
-   and then `changeset publish`. `prepublishOnly` also runs `npm run check`.
+1. On `main`, `npm run version-packages` (`changeset version`) bumps `package.json#version` and
+   writes `CHANGELOG.md`. Commit it.
+2. Merging `main` into `production` runs `.github/workflows/release.yml`. It publishes the
+   committed version with `npm publish`, whose `prepublishOnly` runs `npm run check` (which
+   rebuilds with the new version and runs the tests), then tags `vX.Y.Z` and creates the GitHub
+   release (AD-15). It refuses to release `0.0.0` or while changesets are pending.
+3. Manual fallback: `npm run release` runs `npm run check` and then `changeset publish`.
 
 No manual edit of `src/version.ts` is needed.
 

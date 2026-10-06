@@ -8,7 +8,7 @@ prebuilt CSS file (owner decision D-01M3VMEXVVHS9M8B2R8QXX84ZM).
 
 ```css
 @import 'tailwindcss';
-@import '@eliyce/media-pro/styles.css';
+@import '@eliyce/laravel-medialibrary-freemium-app/styles.css';
 ```
 
 ## Customizing

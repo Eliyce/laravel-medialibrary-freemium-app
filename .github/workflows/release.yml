@@ -1,0 +1,265 @@
+# Releases whatever version `main` was bumped to. Versioning happens on `main` with
+# `npm run version-packages`; merging `main` into `production` runs this workflow. It reruns CI,
+# then publishes the package.json version to npm, pushes the shared `vX.Y.Z` tag (Private
+# Packagist picks it up through its GitHub integration) and creates the GitHub release from that
+# version's CHANGELOG.md section. Each step skips what already exists, so a re-run finishes a
+# partial release without duplicating anything. This workflow never commits and never moves a tag.
+name: Release
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # bash -eo pipefail
+    shell: bash
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    needs: ci
+    if: github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+    permissions:
+      # Push the vX.Y.Z tag and create the GitHub release.
+      contents: write
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Preflight
+        id: preflight
+        env:
+          # Only whether the secret is set reaches the shell, never its value.
+          NPM_TOKEN_SET: ${{ secrets.NPM_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+
+          fail() {
+            printf '::error title=%s::%s\n' "$1" "$2"
+            exit 1
+          }
+
+          if [ "${NPM_TOKEN_SET}" != "true" ]; then
+            fail "NPM_TOKEN secret missing" "The NPM_TOKEN repository secret is empty. Create an npm automation token with publish rights to the @eliyce scope, add it as the NPM_TOKEN repository secret (Settings > Secrets and variables > Actions) and re-run this workflow."
+          fi
+
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+
+          pending=0
+          for file in .changeset/*.md; do
+            if [ -e "$file" ] && [ "$(basename "$file")" != "README.md" ]; then
+              pending=$((pending + 1))
+            fi
+          done
+          if [ "$pending" -gt 0 ] || [ "$version" = "0.0.0" ]; then
+            fail "Version not bumped" "Found ${pending} pending changeset(s) and version ${version}. Run npm run version-packages on main, commit the version bump and CHANGELOG.md, then merge main into production again."
+          fi
+
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            fail "Invalid version" "package.json version ${version} is not X.Y.Z semver (an optional -prerelease suffix is allowed). Set the version on main with npm run version-packages, then merge main into production again."
+          fi
+
+          # The release notes are the lines after "## X.Y.Z" up to the next "## " heading.
+          notes="${RUNNER_TEMP}/release-notes.md"
+          if ! awk -v heading="## ${version}" '
+            { sub(/\r$/, "") }
+            !found { line = $0; sub(/[ \t]+$/, "", line); if (line == heading) found = 1; next }
+            /^## / { exit }
+            /^[ \t]*$/ { if (started) blanks++; next }
+            { while (blanks > 0) { print ""; blanks-- }; print; started = 1 }
+            END { if (!found) exit 3 }
+          ' CHANGELOG.md > "$notes"; then
+            fail "No CHANGELOG section" "CHANGELOG.md has no '## ${version}' section. Run npm run version-packages on main so it writes the section, commit it, then merge main into production again."
+          fi
+          if [ ! -s "$notes" ]; then
+            echo "::warning title=Empty release notes::The '## ${version}' section of CHANGELOG.md is empty, so the GitHub release will have no notes."
+          fi
+
+          prerelease=false
+          if [[ "$version" == *-* ]]; then
+            prerelease=true
+          fi
+
+          {
+            echo "name=${name}"
+            echo "version=${version}"
+            echo "tag=v${version}"
+            echo "notes=${notes}"
+            echo "prerelease=${prerelease}"
+          } >> "$GITHUB_OUTPUT"
+          echo "Releasing ${name}@${version} as tag v${version}."
+
+      - name: Check npm for this version
+        id: npm
+        env:
+          PACKAGE_NAME: ${{ steps.preflight.outputs.name }}
+          PACKAGE_VERSION: ${{ steps.preflight.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          err="${RUNNER_TEMP}/npm-view.err"
+          if found="$(npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version 2>"$err")"; then
+            if [ "$found" = "$PACKAGE_VERSION" ]; then
+              echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is already on npm. Skipping npm publish."
+              echo "published=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "::error title=Unexpected npm view output::npm view ${PACKAGE_NAME}@${PACKAGE_VERSION} succeeded without printing that version, so the publish state is unknown. Nothing was published. Check the registry and re-run."
+            exit 1
+          fi
+
+          if grep -q 'code E404' "$err"; then
+            echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is not on npm yet. Publishing it."
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          else
+            cat "$err" >&2
+            echo "::error title=npm view failed::npm view failed with an error other than E404, so the publish state is unknown. Nothing was published. Check the log above and re-run."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        if: steps.npm.outputs.published == 'false'
+        run: npm ci
+
+      - name: Publish to npm
+        id: publish
+        if: steps.npm.outputs.published == 'false'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PRERELEASE: ${{ steps.preflight.outputs.prerelease }}
+        run: |
+          set -euo pipefail
+
+          # prepublishOnly runs `npm run check` first. npm refuses to tag a prerelease "latest".
+          if [ "$PRERELEASE" = "true" ]; then
+            npm publish --tag next
+          else
+            npm publish
+          fi
+
+      - name: Push tag
+        id: tag
+        env:
+          TAG: ${{ steps.preflight.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          ref="refs/tags/${TAG}"
+          remote="$(git ls-remote --tags origin "$ref")"
+          if printf '%s\n' "$remote" | awk -v ref="$ref" '$2 == ref { found = 1 } END { exit !found }'; then
+            git fetch --no-tags origin "$ref"
+            tagged="$(git rev-parse 'FETCH_HEAD^{commit}')"
+            head="$(git rev-parse HEAD)"
+            echo "Tag ${TAG} already exists on origin. Skipping the tag."
+            if [ "$tagged" != "$head" ]; then
+              echo "::notice title=Version already released::${TAG} points at ${tagged}, not at ${head}. This version was released before, so nothing new was tagged. Bump the version on main to release these commits."
+            fi
+            echo "result=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            tag -a "$TAG" -m "$TAG" HEAD
+          # Push only this tag ref. Never a branch, never --force.
+          git push origin "${ref}:${ref}"
+          echo "Pushed tag ${TAG}."
+          echo "result=pushed" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ steps.preflight.outputs.tag }}
+          NOTES_FILE: ${{ steps.preflight.outputs.notes }}
+          PRERELEASE: ${{ steps.preflight.outputs.prerelease }}
+        run: |
+          set -euo pipefail
+
+          err="${RUNNER_TEMP}/gh-release-view.err"
+          if gh release view "$TAG" > /dev/null 2>"$err"; then
+            echo "GitHub release ${TAG} already exists. Skipping the release."
+            echo "result=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! grep -qi 'release not found' "$err"; then
+            cat "$err" >&2
+            echo "::error title=gh release view failed::gh release view failed with an error other than release not found, so the release state is unknown. Check the log above and re-run."
+            exit 1
+          fi
+
+          # --verify-tag stops gh from creating the tag itself if it is missing.
+          args=(release create "$TAG" --title "$TAG" --notes-file "$NOTES_FILE" --verify-tag)
+          if [ "$PRERELEASE" = "true" ]; then
+            args+=(--prerelease)
+          fi
+          gh "${args[@]}"
+          echo "result=created" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        if: always()
+        env:
+          PACKAGE_NAME: ${{ steps.preflight.outputs.name }}
+          PACKAGE_VERSION: ${{ steps.preflight.outputs.version }}
+          NPM_PUBLISHED: ${{ steps.npm.outputs.published }}
+          NPM_OUTCOME: ${{ steps.npm.outcome }}
+          PUBLISH_OUTCOME: ${{ steps.publish.outcome }}
+          TAG_RESULT: ${{ steps.tag.outputs.result }}
+          TAG_OUTCOME: ${{ steps.tag.outcome }}
+          RELEASE_RESULT: ${{ steps.release.outputs.result }}
+          RELEASE_OUTCOME: ${{ steps.release.outcome }}
+        run: |
+          set -euo pipefail
+
+          # outcome <result output> <step outcome>
+          outcome() {
+            if [ -n "$1" ]; then
+              echo "$1"
+            elif [ "$2" = "failure" ]; then
+              echo "failed"
+            else
+              echo "not run"
+            fi
+          }
+
+          if [ "$NPM_PUBLISHED" = "true" ]; then
+            npm_result="skipped"
+          elif [ "$PUBLISH_OUTCOME" = "success" ]; then
+            npm_result="published"
+          elif [ "$PUBLISH_OUTCOME" = "failure" ] || [ "$NPM_OUTCOME" = "failure" ]; then
+            npm_result="failed"
+          else
+            npm_result="not run"
+          fi
+
+          {
+            echo "## Release"
+            echo
+            echo "| Item | Outcome |"
+            echo "| --- | --- |"
+            echo "| Package | ${PACKAGE_NAME:-unknown (preflight failed)} |"
+            echo "| Version | ${PACKAGE_VERSION:-unknown (preflight failed)} |"
+            echo "| npm publish | ${npm_result} |"
+            echo "| Tag | $(outcome "$TAG_RESULT" "$TAG_OUTCOME") |"
+            echo "| GitHub release | $(outcome "$RELEASE_RESULT" "$RELEASE_OUTCOME") |"
+          } >> "$GITHUB_STEP_SUMMARY"

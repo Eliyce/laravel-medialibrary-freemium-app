@@ -3,10 +3,10 @@
 Upload components for Laravel apps, compatible with the Spatie Media Library Pro v6 API. This
 repo holds two packages:
 
-| Package                                  | Registry  | What it gives you                                                        |
-| ---------------------------------------- | --------- | ------------------------------------------------------------------------ |
-| [`eliyce/laravel-media-pro`](#php-setup) | Packagist | Temporary uploads, upload routes, request handling and validation rules. |
-| [`@eliyce/media-pro`](#frontend-setup)   | npm       | A framework-agnostic upload core, React components and Tailwind styles.  |
+| Package                                                        | Registry          | What it gives you                                                        |
+| -------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------ |
+| [`eliyce/laravel-medialibrary-freemium-app`](#php-setup)       | Private Packagist | Temporary uploads, upload routes, request handling and validation rules. |
+| [`@eliyce/laravel-medialibrary-freemium-app`](#frontend-setup) | npm               | A framework-agnostic upload core, React components and Tailwind styles.  |
 
 Both packages sit on top of [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary)
 v11. They do not need a Spatie Media Library Pro license.
@@ -21,7 +21,7 @@ v11. They do not need a Spatie Media Library Pro license.
 ## PHP setup
 
 ```bash
-composer require eliyce/laravel-media-pro
+composer require eliyce/laravel-medialibrary-freemium-app
 php artisan vendor:publish --tag=media-pro-migrations
 php artisan migrate
 php artisan vendor:publish --tag=media-pro-config   # optional
@@ -56,40 +56,40 @@ class Post extends Model implements HasMedia
 
 `InteractsWithMediaPro` includes `InteractsWithMedia`, so the rest of the model keeps working.
 
-> **Laravel 11:** every 11.x release has a published security advisory, so Composer 2.9+ may
-> refuse to install it. Upgrade Laravel, or run `composer config audit.block-insecure false` if
-> you must stay on 11.
+> **Laravel 10 and 11:** every 10.x and 11.x release has a published security advisory, so
+> Composer 2.9+ may refuse to install it. Upgrade Laravel, or run
+> `composer config audit.block-insecure false` if you must stay on 10 or 11.
 
 ## Frontend setup
 
 ```bash
-npm install @eliyce/media-pro
+npm install @eliyce/laravel-medialibrary-freemium-app
 ```
 
 `react` and `react-dom` (18 or later) are optional peer dependencies. You only need them for
-`@eliyce/media-pro/react`.
+`@eliyce/laravel-medialibrary-freemium-app/react`.
 
 The styles ship as Tailwind `@apply` source, with no prebuilt CSS. Import them after Tailwind,
 in the stylesheet Tailwind processes:
 
 ```css
 @import 'tailwindcss';
-@import '@eliyce/media-pro/styles.css';
+@import '@eliyce/laravel-medialibrary-freemium-app/styles.css';
 ```
 
-| Import                         | Contains                                                         |
-| ------------------------------ | ---------------------------------------------------------------- |
-| `@eliyce/media-pro`            | `VERSION` plus the core API                                      |
-| `@eliyce/media-pro/core`       | The core: `MediaLibrary` store, upload, validation, translations |
-| `@eliyce/media-pro/react`      | React components and the `useMediaLibrary` hook                  |
-| `@eliyce/media-pro/styles.css` | Tailwind source styles (`media-library-*` classes)               |
+| Import                                                 | Contains                                                         |
+| ------------------------------------------------------ | ---------------------------------------------------------------- |
+| `@eliyce/laravel-medialibrary-freemium-app`            | `VERSION` plus the core API                                      |
+| `@eliyce/laravel-medialibrary-freemium-app/core`       | The core: `MediaLibrary` store, upload, validation, translations |
+| `@eliyce/laravel-medialibrary-freemium-app/react`      | React components and the `useMediaLibrary` hook                  |
+| `@eliyce/laravel-medialibrary-freemium-app/styles.css` | Tailwind source styles (`media-library-*` classes)               |
 
 ## React usage
 
 ### Attachment: one file
 
 ```tsx
-import { MediaLibraryAttachment } from '@eliyce/media-pro/react';
+import { MediaLibraryAttachment } from '@eliyce/laravel-medialibrary-freemium-app/react';
 
 <form method="post" action="/profile">
   <MediaLibraryAttachment
@@ -106,7 +106,7 @@ files. Pass `editableName` to show a name input.
 ### Collection: a sortable list
 
 ```tsx
-import { MediaLibraryCollection } from '@eliyce/media-pro/react';
+import { MediaLibraryCollection } from '@eliyce/laravel-medialibrary-freemium-app/react';
 
 <MediaLibraryCollection
   name="images"
@@ -221,7 +221,7 @@ them. Set `routePrefix` when the routes use another prefix.
 `useMediaLibrary` gives you the state and helpers the built-in components use:
 
 ```tsx
-import { HiddenFields, useMediaLibrary } from '@eliyce/media-pro/react';
+import { HiddenFields, useMediaLibrary } from '@eliyce/laravel-medialibrary-freemium-app/react';
 
 function AvatarPicker() {
   const { state, getFileInputProps, getImgProps, removeMedia } = useMediaLibrary({
@@ -244,7 +244,7 @@ function AvatarPicker() {
 
 `DropZone`, `Uploader`, `Thumb`, `ItemErrors`, `ListErrors`, `Icon`, `IconButton` and `Icons`
 are exported as building blocks. For a framework other than React, use `MediaLibrary` from
-`@eliyce/media-pro/core` and subscribe to its state.
+`@eliyce/laravel-medialibrary-freemium-app/core` and subscribe to its state.
 
 ## Server usage
 
@@ -349,15 +349,15 @@ upload can only be claimed from the session that created it.
 
 ## Differences from Spatie Media Library Pro
 
-| Spatie Media Library Pro v6                          | Media Pro                                             |
-| ---------------------------------------------------- | ----------------------------------------------------- |
-| `spatie/laravel-medialibrary-pro` (licensed)         | `eliyce/laravel-media-pro`                            |
-| `media-library-pro-react-attachment` / `-collection` | `@eliyce/media-pro/react`                             |
-| `use InteractsWithMedia;` on models                  | `use InteractsWithMediaPro;`                          |
-| `media-library:delete-old-temporary-uploads`         | `media-pro:delete-old-temporary-uploads`              |
-| Rate limiter `medialibrary-pro-uploads`              | Rate limiter `media-pro-uploads`                      |
-| `Spatie\MediaLibraryPro\...` classes                 | `Eliyce\MediaPro\...` classes                         |
-| Prebuilt CSS or Tailwind source                      | Tailwind source only (`@eliyce/media-pro/styles.css`) |
+| Spatie Media Library Pro v6                          | Media Pro                                                                     |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `spatie/laravel-medialibrary-pro` (licensed)         | `eliyce/laravel-medialibrary-freemium-app`                                    |
+| `media-library-pro-react-attachment` / `-collection` | `@eliyce/laravel-medialibrary-freemium-app/react`                             |
+| `use InteractsWithMedia;` on models                  | `use InteractsWithMediaPro;`                                                  |
+| `media-library:delete-old-temporary-uploads`         | `media-pro:delete-old-temporary-uploads`                                      |
+| Rate limiter `medialibrary-pro-uploads`              | Rate limiter `media-pro-uploads`                                              |
+| `Spatie\MediaLibraryPro\...` classes                 | `Eliyce\MediaPro\...` classes                                                 |
+| Prebuilt CSS or Tailwind source                      | Tailwind source only (`@eliyce/laravel-medialibrary-freemium-app/styles.css`) |
 
 The component props, the `useMediaLibrary` helpers, the routes, the form value and the
 validation builder follow Spatie's API. React is the only frontend binding so far.
@@ -370,36 +370,100 @@ npm run check   # typecheck, lint, format check, JS tests, build
 composer test   # PHPUnit suite for the Laravel package
 ```
 
-Run both before you push. Releases use [Changesets](https://github.com/changesets/changesets):
-run `npm run changeset` for every user-facing change.
+Run both before you push. CI runs them again on every pull request and push to `main` (see
+[Releasing](#releasing)). Releases use [Changesets](https://github.com/changesets/changesets): run
+`npm run changeset` for every user-facing change.
 
 ## Releasing
 
-### Prerequisites
+Releases run in GitHub Actions. Versioning happens on `main`. Merging `main` into the
+`production` branch publishes that version.
 
-- An npm account with publish rights to the `@eliyce` scope: either an npm organization named
-  `eliyce` that you belong to, or the npm user `eliyce` itself.
-- Run `npm login` once on the release machine. If the account has two-factor authentication on,
-  npm asks for a one-time password when you publish.
+| Workflow                        | Runs on                                           | What it does                                                                                                                                                   |
+| ------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/ci.yml`      | Every pull request and push to `main`             | `npm run check` on Node 20 and 22, `npm audit --audit-level=high`, the JS tests on React 18, and `composer test` on Laravel 10, 11, 12 and 13 (PHP 8.2 to 8.4) |
+| `.github/workflows/release.yml` | Every push to `production`, or a manual run there | Reruns CI, then publishes to npm, pushes the `vX.Y.Z` tag and creates the GitHub release                                                                       |
 
-### Publish the npm package
+### One-time setup
 
-1. For each user-facing change, run `npm run changeset` and commit the generated file.
-2. Run `npm run version-packages`. It runs `changeset version`, which bumps
-   `package.json#version`, writes `CHANGELOG.md` and removes the used changesets. `VERSION` is
-   read from `package.json` at build time, so no other file needs a bump.
-3. Commit the version bump.
-4. Run `npm run release`. It runs the full `npm run check`, then `changeset publish`, which
-   publishes `@eliyce/media-pro` with public access (from `publishConfig`) and creates the git
-   tag `vX.Y.Z`.
-5. Push the commit and the tag: `git push --follow-tags`.
+1. **npm token.** You need an npm account with publish rights to the `@eliyce` scope: an npm
+   organization named `eliyce` that you belong to, or the npm user `eliyce` itself. On
+   npmjs.com (Access Tokens), create a granular access token with publish rights to the
+   `@eliyce` scope (bypass 2FA for publishing). Add it to the GitHub repository as the
+   `NPM_TOKEN` secret (Settings > Secrets and variables > Actions). The release fails with an
+   error naming the secret if it is missing. It only checks that the secret is set, so an
+   expired or revoked token shows up as an authentication error from `npm publish`: replace the
+   secret before the token expires.
+2. **Private Packagist.** The repository is private, so the composer package is served by
+   [Private Packagist](https://packagist.com), not packagist.org. In your Private Packagist
+   organization, add the repository through its GitHub integration so it installs the webhook.
+   Every `vX.Y.Z` tag the release pushes then shows up as a composer version. Apps install the
+   package after adding your organization's Private Packagist repository to their
+   `composer.json`.
+3. **The `production` branch.** Create it once from `main` and push it:
 
-### Publish the composer package
+   ```bash
+   git switch main && git pull
+   git switch -c production && git push -u origin production
+   ```
 
-Packagist reads releases from git tags. Submit the repository URL once on
-[packagist.org](https://packagist.org/packages/submit) as `eliyce/laravel-media-pro`; after that,
-every pushed `vX.Y.Z` tag becomes a release. The tag from step 4 is the npm version, so both
-packages share version numbers.
+   Protect it (Settings > Branches or Rules): require pull requests or restrict who can push,
+   require the `CI` checks to pass, and block force pushes and deletion.
+
+### Cut a release
+
+1. For each user-facing change, run `npm run changeset` on your branch and commit the generated
+   file with the change.
+2. On `main`, run `npm run version-packages`. It runs `changeset version`, which bumps
+   `package.json#version`, writes the `## X.Y.Z` section of `CHANGELOG.md` and removes the used
+   changesets. `VERSION` is read from `package.json` at build time, so no other file needs a
+   bump. Commit the result and push it to `main`.
+3. Merge `main` into `production` (a pull request from `main` to `production`, or
+   `git switch production && git merge --ff-only main && git push`).
+
+The release workflow then:
+
+1. Reruns the full CI workflow and stops if anything is red.
+2. Checks before it changes anything. It fails with an error that says what to fix if
+   `NPM_TOKEN` is empty, if any changeset is still pending or the version is `0.0.0` (run
+   `npm run version-packages` on `main` and merge again), if the version is not semver, or if
+   `CHANGELOG.md` has no `## X.Y.Z` section.
+3. Publishes `@eliyce/laravel-medialibrary-freemium-app@X.Y.Z` to npm with public access, unless
+   that version is already on npm. `prepublishOnly` runs `npm run check` first. A prerelease
+   version (`X.Y.Z-beta.1`) is published under the `next` dist-tag.
+4. Pushes the annotated tag `vX.Y.Z` on the merged commit, unless the tag already exists. npm and
+   composer share this tag and version number. Private Packagist picks the tag up through its
+   webhook.
+5. Creates the GitHub release `vX.Y.Z` with that version's `CHANGELOG.md` section as the notes,
+   unless the release already exists.
+6. Writes a summary table to the run page: what was published, tagged and created, and what was
+   skipped.
+
+The workflow never commits, never pushes a branch and never moves or deletes a tag.
+
+### Re-running a release
+
+Each step skips what already exists, so re-run the failed workflow from the Actions tab once the
+cause is fixed. If npm publishing worked and the tag push failed, the re-run skips npm and only
+pushes the tag and creates the release. Pushing to `production` again without a version bump
+publishes nothing: the run reports the version as already released. Releases run one at a time
+and GitHub keeps only one waiting run, so if several versions reach `production` in quick
+succession a newer run can replace a waiting one. The replaced version is then not released;
+the newer version contains its changes. Re-running the replaced run after the newer release
+would move npm's `latest` dist-tag back to the older version. If a Private Packagist sync was
+missed, trigger an update from Private Packagist; no new tag is needed.
+
+### Manual fallback
+
+If GitHub Actions is unavailable, release from a machine that is logged in to npm (`npm login`;
+with two-factor authentication on, npm asks for a one-time password):
+
+1. Version on `main` as above (`npm run version-packages`, commit, push).
+2. Run `npm run release`. It runs the full `npm run check`, then `changeset publish`, which
+   publishes the package with public access and creates the git tag `vX.Y.Z`.
+3. Push the tag: `git push origin vX.Y.Z`. Then create the GitHub release by hand, or merge
+   `main` into `production` and let the workflow create it (it skips the npm publish and the
+   existing tag).
 
 ## License
 

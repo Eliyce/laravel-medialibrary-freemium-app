@@ -1,0 +1,23 @@
+{
+  "id": "D-01M48MD0B506BWE69MK2BHMWPS",
+  "category": "workflow-or-tool",
+  "title": "Which branch triggers a release",
+  "context": "No production branch exists today; only main. Releases should run when work is merged into the production branch.",
+  "options": [
+    {
+      "option_key": "production",
+      "label": "New 'production' branch; merging main into it releases"
+    },
+    {
+      "option_key": "main",
+      "label": "Release on every merge to main"
+    }
+  ],
+  "recommendation": "production",
+  "created_at": "2026-10-06T12:53:15.749Z",
+  "status": "resolved",
+  "change": "01M48MCZKAF94904WDEEAKNNA8",
+  "chosen": "production",
+  "rationale": "Developer chose a dedicated production branch",
+  "resolved_at": "2026-10-06T12:54:12.569Z"
+}

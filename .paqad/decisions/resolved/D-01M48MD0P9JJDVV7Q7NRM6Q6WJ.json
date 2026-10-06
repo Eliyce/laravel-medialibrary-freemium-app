@@ -1,0 +1,27 @@
+{
+  "id": "D-01M48MD0P9JJDVV7Q7NRM6Q6WJ",
+  "category": "workflow-or-tool",
+  "title": "Where the composer package is published",
+  "context": "The GitHub repo is private. Public packagist.org only accepts public repositories, so it cannot read releases from this repo while it stays private.",
+  "options": [
+    {
+      "option_key": "public-repo",
+      "label": "Make the repo public and use packagist.org (pipeline tags and pings Packagist)"
+    },
+    {
+      "option_key": "private-packagist",
+      "label": "Keep it private and use Private Packagist (pipeline tags and pings it)"
+    },
+    {
+      "option_key": "vcs-only",
+      "label": "Keep it private; pipeline only tags, consumers install via a composer 'vcs' repository"
+    }
+  ],
+  "recommendation": "public-repo",
+  "created_at": "2026-10-06T12:53:16.105Z",
+  "status": "resolved",
+  "change": "01M48MCZKAF94904WDEEAKNNA8",
+  "chosen": "private-packagist",
+  "rationale": "Developer keeps the repo private and uses Private Packagist",
+  "resolved_at": "2026-10-06T12:54:12.990Z"
+}

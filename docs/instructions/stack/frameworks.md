@@ -29,7 +29,7 @@ and are not duplicated here. In short:
 
 ## React (optional peer)
 
-`@eliyce/media-pro/react` targets React 18 and 19. It uses `useSyncExternalStore`, `useId` and
+`@eliyce/laravel-medialibrary-freemium-app/react` targets React 18 and 19. It uses `useSyncExternalStore`, `useId` and
 the automatic JSX runtime (`react/jsx-runtime`, external). The entry carries `"use client"` for
 React Server Components frameworks such as the Next.js App Router, and renders on the server
 without touching browser globals.
@@ -41,7 +41,7 @@ build compiles it; the header documents the Tailwind 4 `@import` setup.
 
 ## Laravel (composer package)
 
-`eliyce/laravel-media-pro` is a Laravel package: an auto-discovered service provider
+`eliyce/laravel-medialibrary-freemium-app` is a Laravel package: an auto-discovered service provider
 (`extra.laravel.providers`), a route macro, publishable config and migration, an Artisan command,
 FormRequest traits and validation rules. It supports Laravel 10.2 through 13 and extends
 `spatie/laravel-medialibrary` v11 (models, media rows, conversions, `InteractsWithMedia`).

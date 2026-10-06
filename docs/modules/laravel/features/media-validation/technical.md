@@ -30,8 +30,8 @@ passes other entries through; use it with `Validator::make()`.
 - Laravel 10.2 to 10.42 (no `validationRules()` hook): `getValidatorInstance()` binds a container
   method for `rules` that expands the result, then defers to the parent.
 
-No CI job runs the suite on a real Laravel 10.x install, so the 10.2 to 10.42 fallback is
-verified only by local runs (TD-19).
+The Laravel 10 CI leg installs only the latest 10.x release, which has `validationRules()`, so the
+10.2 to 10.42 fallback is verified only by local runs (TD-19).
 
 ## Builder guards
 

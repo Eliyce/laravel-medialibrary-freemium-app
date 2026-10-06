@@ -1,6 +1,6 @@
 # Package Setup API
 
-Package `eliyce/laravel-media-pro`, namespace `Eliyce\MediaPro`. Requires PHP ^8.2, Laravel
+Package `eliyce/laravel-medialibrary-freemium-app`, namespace `Eliyce\MediaPro`. Requires PHP ^8.2, Laravel
 `^10.2|^11.0|^12.0|^13.0` and `spatie/laravel-medialibrary ^11.0`.
 
 ## Service provider

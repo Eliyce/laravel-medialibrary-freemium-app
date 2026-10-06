@@ -44,7 +44,11 @@ interface Probe {
 
 /** Runs a script in a plain Node process (no DOM), resolving the package by self-reference. */
 function probe(kind: 'esm' | 'cjs'): Probe {
-  const specifiers = ['@eliyce/media-pro', '@eliyce/media-pro/core', '@eliyce/media-pro/react'];
+  const specifiers = [
+    '@eliyce/laravel-medialibrary-freemium-app',
+    '@eliyce/laravel-medialibrary-freemium-app/core',
+    '@eliyce/laravel-medialibrary-freemium-app/react',
+  ];
   const esm = `
     const names = {}, resolved = {}, modules = {};
     for (const s of ${JSON.stringify(specifiers)}) {
@@ -52,9 +56,9 @@ function probe(kind: 'esm' | 'cjs'): Probe {
       names[s] = Object.keys(modules[s]).sort();
       resolved[s] = import.meta.resolve(s);
     }
-    resolved.css = import.meta.resolve('@eliyce/media-pro/styles.css');
-    const sharedClass = modules['@eliyce/media-pro'].MediaLibrary === modules['@eliyce/media-pro/core'].MediaLibrary;
-    console.log(JSON.stringify({ names, resolved, version: modules['@eliyce/media-pro'].VERSION, sharedClass,
+    resolved.css = import.meta.resolve('@eliyce/laravel-medialibrary-freemium-app/styles.css');
+    const sharedClass = modules['@eliyce/laravel-medialibrary-freemium-app'].MediaLibrary === modules['@eliyce/laravel-medialibrary-freemium-app/core'].MediaLibrary;
+    console.log(JSON.stringify({ names, resolved, version: modules['@eliyce/laravel-medialibrary-freemium-app'].VERSION, sharedClass,
       globals: [typeof window, typeof document] }));`;
   const cjs = `
     const names = {}, resolved = {}, modules = {};
@@ -63,9 +67,9 @@ function probe(kind: 'esm' | 'cjs'): Probe {
       names[s] = Object.keys(modules[s]).sort();
       resolved[s] = require.resolve(s);
     }
-    resolved.css = require.resolve('@eliyce/media-pro/styles.css');
-    const sharedClass = modules['@eliyce/media-pro'].MediaLibrary === modules['@eliyce/media-pro/core'].MediaLibrary;
-    console.log(JSON.stringify({ names, resolved, version: modules['@eliyce/media-pro'].VERSION, sharedClass,
+    resolved.css = require.resolve('@eliyce/laravel-medialibrary-freemium-app/styles.css');
+    const sharedClass = modules['@eliyce/laravel-medialibrary-freemium-app'].MediaLibrary === modules['@eliyce/laravel-medialibrary-freemium-app/core'].MediaLibrary;
+    console.log(JSON.stringify({ names, resolved, version: modules['@eliyce/laravel-medialibrary-freemium-app'].VERSION, sharedClass,
       globals: [typeof window, typeof document] }));`;
   const args = kind === 'esm' ? ['--input-type=module', '-e', esm] : ['-e', cjs];
   return JSON.parse(execFileSync(process.execPath, args, { cwd: root, encoding: 'utf8' })) as Probe;
@@ -87,22 +91,30 @@ describe('built package', () => {
       const result = probe(kind);
       const ext = kind === 'esm' ? 'js' : 'cjs';
       expect(result.globals).toEqual(['undefined', 'undefined']);
-      expect(relative(result.resolved['@eliyce/media-pro']!)).toBe(`dist/index.${ext}`);
-      expect(relative(result.resolved['@eliyce/media-pro/core']!)).toBe(`dist/core.${ext}`);
-      expect(relative(result.resolved['@eliyce/media-pro/react']!)).toBe(`dist/react.${ext}`);
+      expect(relative(result.resolved['@eliyce/laravel-medialibrary-freemium-app']!)).toBe(
+        `dist/index.${ext}`,
+      );
+      expect(relative(result.resolved['@eliyce/laravel-medialibrary-freemium-app/core']!)).toBe(
+        `dist/core.${ext}`,
+      );
+      expect(relative(result.resolved['@eliyce/laravel-medialibrary-freemium-app/react']!)).toBe(
+        `dist/react.${ext}`,
+      );
       expect(relative(result.resolved.css!)).toBe('styles/media-pro.css');
 
       expect(result.version).toBe(pkg.version);
       expect(result.sharedClass).toBe(true);
       for (const name of CORE_EXPORTS) {
-        expect(result.names['@eliyce/media-pro']).toContain(name);
-        expect(result.names['@eliyce/media-pro/core']).toContain(name);
+        expect(result.names['@eliyce/laravel-medialibrary-freemium-app']).toContain(name);
+        expect(result.names['@eliyce/laravel-medialibrary-freemium-app/core']).toContain(name);
       }
-      expect(result.names['@eliyce/media-pro']).toContain('VERSION');
-      expect(result.names['@eliyce/media-pro/react']).toEqual(
+      expect(result.names['@eliyce/laravel-medialibrary-freemium-app']).toContain('VERSION');
+      expect(result.names['@eliyce/laravel-medialibrary-freemium-app/react']).toEqual(
         expect.arrayContaining(REACT_EXPORTS),
       );
-      expect(result.names['@eliyce/media-pro/react']).not.toContain('default');
+      expect(result.names['@eliyce/laravel-medialibrary-freemium-app/react']).not.toContain(
+        'default',
+      );
     },
   );
 

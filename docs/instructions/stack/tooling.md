@@ -5,7 +5,8 @@
 - **npm** for the JS package, lockfile `package-lock.json` (commit it). pnpm is not used.
 - **Composer 2** for the PHP package, lockfile `composer.lock` (committed for development; it is
   export-ignored from the dist archive). Development uses Composer 2.9.
-- Node.js `>=18` for consumers; development runs on Node 24.11. PHP 8.3 locally.
+- Node.js `>=18` for consumers; development runs on Node 24.11 and CI on Node 20 and 22. PHP 8.3
+  locally; CI runs PHP 8.2 to 8.4.
 
 ## npm scripts
 
@@ -23,19 +24,50 @@
 | `npm run check`            | typecheck → lint → format:check → test → build | Full JS gate; also runs on `prepublishOnly`        |
 | `npm run changeset`        | `changeset`                                    | Record a user-facing change                        |
 | `npm run version-packages` | `changeset version`                            | Bump `package.json#version`, write `CHANGELOG.md`  |
-| `npm run release`          | `npm run check && changeset publish`           | Publish to npm (public access), tag `vX.Y.Z`       |
+| `npm run release`          | `npm run check && changeset publish`           | Manual fallback: publish to npm, tag `vX.Y.Z`      |
 
-The release steps are in the README "Releasing" section.
+Releases normally run in the release workflow (see GitHub Actions below); `npm run release` is
+the manual fallback. The steps are in the README "Releasing" section.
 
 `.claude/` holds files that local AI tooling rewrites; Prettier and ESLint skip it so those edits
 cannot fail `npm run check`, which `prepublishOnly` runs before every publish.
 
 ## Composer scripts
 
-| Script                       | Command   | Use                                             |
-| ---------------------------- | --------- | ----------------------------------------------- |
-| `composer test`              | `phpunit` | Run the PHP suite (`phpunit.xml.dist`)          |
-| `composer validate --strict` | built in  | Validate `composer.json` (run before a release) |
+| Script                       | Command   | Use                                              |
+| ---------------------------- | --------- | ------------------------------------------------ |
+| `composer test`              | `phpunit` | Run the PHP suite (`phpunit.xml.dist`)           |
+| `composer validate --strict` | built in  | Validate `composer.json` (every CI composer leg) |
+
+## GitHub Actions
+
+| Workflow                        | Triggers                                                                    | Jobs                                                                                                                                                                                                                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/ci.yml`      | `pull_request`, `push` to `main`, `workflow_call`                           | `npm`: `npm ci`, `npm run check` and `npm audit --audit-level=high` on Node 20 and 22. `npm-react18`: `npm test` with `react@18` and `react-dom@18` installed `--no-save`. `composer`: `composer validate --strict` and `composer test` on Laravel 10, 11, 12 and 13 |
+| `.github/workflows/release.yml` | `push` to `production`, `workflow_dispatch` (releases only on `production`) | `ci` (calls `ci.yml`), then `release`: preflight checks, `npm publish` if the version is not on npm, the annotated `vX.Y.Z` tag if absent, the GitHub release from the `CHANGELOG.md` section if absent, and a step summary                                          |
+
+- The composer matrix pins the latest release of each Laravel major: 10 with Testbench 8 on PHP
+  8.2, 11 with Testbench 9 on PHP 8.2, 12 with Testbench 10 on PHP 8.3, and 13 with Testbench 11
+  on PHP 8.4. Each leg runs `composer require --no-update` for `laravel/framework` and
+  `orchestra/testbench` (`--dev`), then `composer update --with-all-dependencies`, restores
+  `composer.json` (`PackagingTest` checks the committed constraints) and runs `composer test`.
+  `fail-fast` is off, so every leg reports.
+- Composer 2.9's default `audit.block-insecure` is the composer advisory gate on the Laravel 12
+  and 13 legs. The Laravel 10 and 11 legs turn it off, because every 10.x and 11.x release has a
+  published advisory (TD-13, D-01M48PH8J7HM3BCRB3C9MM17EA). This affects only the CI test install;
+  apps still decide for themselves.
+- CI has `contents: read`. Only the `release` job has `contents: write`, to push the tag and
+  create the GitHub release. It never commits or pushes a branch, never moves a tag, and uses no
+  npm provenance because the repository is private.
+- The `release` job needs the `NPM_TOKEN` repository secret (a granular access token with
+  publish rights to the `@eliyce` scope, bypassing 2FA for publishing). The token reaches
+  `npm publish` only as `NODE_AUTH_TOKEN`.
+- CI cancels superseded runs per workflow and ref, except on `production`. The `release` job has
+  its own `release` concurrency group, which never cancels a running release. GitHub keeps one
+  waiting run per group, so a newer push to `production` can replace a waiting one (README
+  "Re-running a release").
+- Actions are pinned to major tags: `actions/checkout@v7`, `actions/setup-node@v7` and
+  `shivammathur/setup-php@v2`.
 
 ## paqad checks
 

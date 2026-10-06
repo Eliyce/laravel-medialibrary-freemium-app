@@ -14,7 +14,7 @@
 | `Eliyce\MediaPro\MediaLibraryRequestItem`           | One submitted item: `uuid`, `?name`, `?order`, `customProperties`, `?fileName`               |
 | `UploadResponse` array (`MediaProValue::fromMedia`) | `uuid`, `name`, `file_name`, `preview_url`, `original_url`, `size`, `mime_type`, `extension` |
 
-## Public data types (JS, `@eliyce/media-pro/core`)
+## Public data types (JS, `@eliyce/laravel-medialibrary-freemium-app/core`)
 
 | Type                                                          | Description                                                                                                        |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |

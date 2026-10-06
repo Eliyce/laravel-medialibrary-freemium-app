@@ -1,12 +1,12 @@
 # Media Library Store API
 
 Source: `src/core/media-library.ts`, `src/core/value.ts`, `src/core/types.ts`. Exported from
-`@eliyce/media-pro` and `@eliyce/media-pro/core`.
+`@eliyce/laravel-medialibrary-freemium-app` and `@eliyce/laravel-medialibrary-freemium-app/core`.
 
 ## `MediaLibrary`
 
 ```ts
-import { MediaLibrary } from '@eliyce/media-pro/core';
+import { MediaLibrary } from '@eliyce/laravel-medialibrary-freemium-app/core';
 
 const library = new MediaLibrary({
   name: 'images',

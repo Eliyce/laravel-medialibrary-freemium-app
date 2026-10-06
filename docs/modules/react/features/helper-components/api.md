@@ -1,6 +1,6 @@
 # Helper Components API
 
-Source: `src/react/components/*.tsx`. Exported from `@eliyce/media-pro/react` as building blocks
+Source: `src/react/components/*.tsx`. Exported from `@eliyce/laravel-medialibrary-freemium-app/react` as building blocks
 for custom layouts. `NameField` and `ProgressBar` are internal.
 
 ## `DropZone`

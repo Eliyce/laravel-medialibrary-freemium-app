@@ -2,22 +2,22 @@
 
 ## Entry points
 
-| Specifier                        | `import` (ESM)         | `require` (CJS)  | Types                                  | Exports                               |
-| -------------------------------- | ---------------------- | ---------------- | -------------------------------------- | ------------------------------------- |
-| `@eliyce/media-pro`              | `dist/index.js`        | `dist/index.cjs` | `dist/index.d.ts` / `dist/index.d.cts` | `VERSION` + every core export         |
-| `@eliyce/media-pro/core`         | `dist/core.js`         | `dist/core.cjs`  | `dist/core.d.ts` / `dist/core.d.cts`   | Core exports (no `VERSION`)           |
-| `@eliyce/media-pro/react`        | `dist/react.js`        | `dist/react.cjs` | `dist/react.d.ts` / `dist/react.d.cts` | React exports, starts `"use client";` |
-| `@eliyce/media-pro/styles.css`   | `styles/media-pro.css` | same             | n/a                                    | Tailwind source styles                |
-| `@eliyce/media-pro/package.json` | `package.json`         | same             | n/a                                    | Manifest                              |
+| Specifier                                                | `import` (ESM)         | `require` (CJS)  | Types                                  | Exports                               |
+| -------------------------------------------------------- | ---------------------- | ---------------- | -------------------------------------- | ------------------------------------- |
+| `@eliyce/laravel-medialibrary-freemium-app`              | `dist/index.js`        | `dist/index.cjs` | `dist/index.d.ts` / `dist/index.d.cts` | `VERSION` + every core export         |
+| `@eliyce/laravel-medialibrary-freemium-app/core`         | `dist/core.js`         | `dist/core.cjs`  | `dist/core.d.ts` / `dist/core.d.cts`   | Core exports (no `VERSION`)           |
+| `@eliyce/laravel-medialibrary-freemium-app/react`        | `dist/react.js`        | `dist/react.cjs` | `dist/react.d.ts` / `dist/react.d.cts` | React exports, starts `"use client";` |
+| `@eliyce/laravel-medialibrary-freemium-app/styles.css`   | `styles/media-pro.css` | same             | n/a                                    | Tailwind source styles                |
+| `@eliyce/laravel-medialibrary-freemium-app/package.json` | `package.json`         | same             | n/a                                    | Manifest                              |
 
 Fallbacks for tools that ignore `exports`: `main` → `./dist/index.cjs`, `module` →
 `./dist/index.js`, `types` → `./dist/index.d.ts`. No entry has a default export.
 
 ```ts
-import { MediaLibrary, VERSION } from '@eliyce/media-pro'; // root: VERSION + core
-import { MediaLibrary as Core } from '@eliyce/media-pro/core'; // the same object as above
-import { MediaLibraryCollection } from '@eliyce/media-pro/react';
-import '@eliyce/media-pro/styles.css'; // or @import it from your Tailwind stylesheet
+import { MediaLibrary, VERSION } from '@eliyce/laravel-medialibrary-freemium-app'; // root: VERSION + core
+import { MediaLibrary as Core } from '@eliyce/laravel-medialibrary-freemium-app/core'; // the same object as above
+import { MediaLibraryCollection } from '@eliyce/laravel-medialibrary-freemium-app/react';
+import '@eliyce/laravel-medialibrary-freemium-app/styles.css'; // or @import it from your Tailwind stylesheet
 ```
 
 ## Core exports (`.` and `./core`)

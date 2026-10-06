@@ -1,6 +1,6 @@
 # React Summary
 
-React is the UI half of `@eliyce/media-pro`: the `MediaLibraryAttachment` and
+React is the UI half of `@eliyce/laravel-medialibrary-freemium-app`: the `MediaLibraryAttachment` and
 `MediaLibraryCollection` components, the `useMediaLibrary` hook they are built on, the helper
 components for building your own UI, and the Tailwind source styles. It is a thin binding over the
 [Core](../../core/index/summary.md) `MediaLibrary` store and follows the Spatie Media Library Pro v6
@@ -26,10 +26,10 @@ React API.
 
 ## Public Surface
 
-| Specifier                      | Exposes                                                               |
-| ------------------------------ | --------------------------------------------------------------------- |
-| `@eliyce/media-pro/react`      | Components, `useMediaLibrary`, helper components and their prop types |
-| `@eliyce/media-pro/styles.css` | The Tailwind source stylesheet                                        |
+| Specifier                                              | Exposes                                                               |
+| ------------------------------------------------------ | --------------------------------------------------------------------- |
+| `@eliyce/laravel-medialibrary-freemium-app/react`      | Components, `useMediaLibrary`, helper components and their prop types |
+| `@eliyce/laravel-medialibrary-freemium-app/styles.css` | The Tailwind source stylesheet                                        |
 
 The full list is in the [component registry](../../../instructions/registries/component-registry.md)
 and the [API registry](../../../instructions/registries/api-registry.md).
@@ -48,13 +48,13 @@ and the [API registry](../../../instructions/registries/api-registry.md).
 
 `tests/react/*.test.tsx` run in jsdom (per-file `// @vitest-environment jsdom`) with Testing Library
 and a fake transport: the hook lifecycle, Attachment, Collection, helper components, server
-rendering (`renderToString` without `window`) and the shipped stylesheet.
+rendering (`renderToString` without `window`) and the shipped stylesheet. They run on React 19
+locally; CI also runs them on React 18 (`npm-react18` job).
 
 ## Known Gaps
 
 - TD-10: the styles use Tailwind's default palette because the design tokens are placeholders.
 - TD-15: the stylesheet is not compiled by Tailwind in the test suite.
-- TD-5: no CI run across the React 18 and 19 peer range.
 
 ## Related Docs
 

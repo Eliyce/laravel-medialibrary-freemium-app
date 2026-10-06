@@ -2,11 +2,11 @@
 
 ## npm runtime
 
-None. `@eliyce/media-pro` has no `dependencies`.
+None. `@eliyce/laravel-medialibrary-freemium-app` has no `dependencies`.
 
 | Peer        | Range  | Optional | Needed for                                                          |
 | ----------- | ------ | -------- | ------------------------------------------------------------------- |
-| `react`     | `>=18` | yes      | `@eliyce/media-pro/react`                                           |
+| `react`     | `>=18` | yes      | `@eliyce/laravel-medialibrary-freemium-app/react`                   |
 | `react-dom` | `>=18` | yes      | Apps rendering the React components (never imported by the package) |
 
 Both peers are optional in `peerDependenciesMeta`, so consumers of `.` or `./core` alone get no

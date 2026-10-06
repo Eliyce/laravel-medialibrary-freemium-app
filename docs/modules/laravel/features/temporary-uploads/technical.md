@@ -60,8 +60,8 @@ removes the stored file and rethrows. Both controllers catch `QueryException` an
 | 10.2–10.19 | plain `QueryException`               | SQLSTATE `23505` (Postgres); or SQLSTATE class `23` plus driver code 1062 (MySQL/MariaDB), 2601 or 2627 (SQL Server), or the SQLite/driver unique message |
 
 Other integrity errors share SQLSTATE `23000` (NOT NULL, foreign key) and do not match, so they
-are rethrown instead of being reported as a taken uuid. No Laravel 10.x CI job exercises the
-10.2–10.19 path against a real 10.x install; the suite simulates it (`LegacyTemporaryUpload`)
+are rethrown instead of being reported as a taken uuid. The Laravel 10 CI leg installs only the
+latest 10.x release, so nothing exercises the 10.2–10.19 path against a real install; the suite simulates it (`LegacyTemporaryUpload`)
 and unit-tests `matches()` per driver (TD-19).
 
 ## `TemporaryUpload`

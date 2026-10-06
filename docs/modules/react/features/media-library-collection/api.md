@@ -1,12 +1,12 @@
 # MediaLibraryCollection API
 
 Source: `src/react/MediaLibraryCollection.tsx`, `src/react/props.ts`. Exported from
-`@eliyce/media-pro/react` (a `"use client"` module).
+`@eliyce/laravel-medialibrary-freemium-app/react` (a `"use client"` module).
 
 ## Usage
 
 ```tsx
-import { MediaLibraryCollection } from '@eliyce/media-pro/react';
+import { MediaLibraryCollection } from '@eliyce/laravel-medialibrary-freemium-app/react';
 
 <MediaLibraryCollection
   name="images"

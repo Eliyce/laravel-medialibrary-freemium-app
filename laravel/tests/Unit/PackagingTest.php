@@ -14,7 +14,7 @@ class PackagingTest extends TestCase
     {
         $composer = json_decode((string) file_get_contents(self::ROOT.'/composer.json'), true, flags: JSON_THROW_ON_ERROR);
 
-        $this->assertSame('eliyce/laravel-media-pro', $composer['name']);
+        $this->assertSame('eliyce/laravel-medialibrary-freemium-app', $composer['name']);
         $this->assertSame('MIT', $composer['license']);
         $this->assertSame('^8.2', $composer['require']['php']);
         $this->assertSame('^11.0', $composer['require']['spatie/laravel-medialibrary']);

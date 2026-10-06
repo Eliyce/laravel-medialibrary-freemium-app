@@ -1,11 +1,11 @@
 /*
- * @eliyce/media-pro styles: Tailwind CSS source.
+ * @eliyce/laravel-medialibrary-freemium-app styles: Tailwind CSS source.
  *
  * Every rule uses @apply with core Tailwind utilities only, so the components follow your own
  * Tailwind theme. Import this file from the stylesheet Tailwind processes, after Tailwind itself:
  *
  *   @import 'tailwindcss';
- *   @import '@eliyce/media-pro/styles.css';
+ *   @import '@eliyce/laravel-medialibrary-freemium-app/styles.css';
  *
  * Every class starts with `media-library`. Override any rule in your own CSS, or reorder the
  * three sections through `.media-library { grid-template-areas: ... }`.

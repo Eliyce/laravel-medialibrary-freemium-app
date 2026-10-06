@@ -2,10 +2,10 @@
 
 ## What it is
 
-`VERSION` is a constant holding the installed version of `@eliyce/media-pro`, for example `'0.0.0'`.
+`VERSION` is a constant holding the installed version of `@eliyce/laravel-medialibrary-freemium-app`, for example `'0.0.0'`.
 
 ```ts
-import { VERSION } from '@eliyce/media-pro';
+import { VERSION } from '@eliyce/laravel-medialibrary-freemium-app';
 console.log(VERSION); // '0.0.0'
 ```
 

@@ -2,9 +2,9 @@
 
 This repo publishes two packages from one root (decision D-01M3VMEVYRJDSVQWM1APMNBX13):
 
-- **`@eliyce/media-pro`** (npm): a framework-agnostic upload core, React components and Tailwind
+- **`@eliyce/laravel-medialibrary-freemium-app`** (npm): a framework-agnostic upload core, React components and Tailwind
   source styles. No runtime dependencies; `react` and `react-dom` are optional peers.
-- **`eliyce/laravel-media-pro`** (Packagist): temporary uploads, upload routes, request handling
+- **`eliyce/laravel-medialibrary-freemium-app`** (Private Packagist): temporary uploads, upload routes, request handling
   and validation rules on top of `spatie/laravel-medialibrary` v11.
 
 Together they reproduce the Spatie Media Library Pro v6 API for React and Laravel. They share no
@@ -13,8 +13,8 @@ code; they meet over HTTP and a shared value and error contract.
 ## Layout
 
 ```text
-package.json            npm @eliyce/media-pro (files: dist, styles)
-composer.json           composer eliyce/laravel-media-pro (PSR-4 Eliyce\MediaPro\ → laravel/src/)
+package.json            npm @eliyce/laravel-medialibrary-freemium-app (files: dist, styles)
+composer.json           composer eliyce/laravel-medialibrary-freemium-app (PSR-4 Eliyce\MediaPro\ → laravel/src/)
 src/
   index.ts              root entry: VERSION + the core API, re-exported by name
   version.ts
@@ -53,6 +53,23 @@ styles/media-pro.css ───────────────────�
 
 Consumers may import only the declared subpaths (`.`, `./core`, `./react`, `./styles.css`,
 `./package.json`). The `exports` map blocks deep imports.
+
+## Release flow (both registries)
+
+```text
+feature branch ── PR, CI ──▶ main ── npm run version-packages, commit, CI
+                                │
+                                └── merge ──▶ production ──▶ release.yml
+                                                               ├─ CI (calls ci.yml)
+                                                               ├─ npm publish     (skipped if on npm)
+                                                               ├─ tag vX.Y.Z      (skipped if present) ──webhook──▶ Private Packagist
+                                                               └─ GitHub release  (skipped if present)
+```
+
+- The version is bumped only on `main` (`npm run version-packages`); `production` never commits
+  back (AD-15). npm and composer share the one `vX.Y.Z` tag and version number.
+- Each release step checks the remote state first, so a re-run completes a partial release
+  without duplicating anything. Existing tags are never moved.
 
 ## Modules
 

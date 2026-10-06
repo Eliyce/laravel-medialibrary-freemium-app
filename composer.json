@@ -1,6 +1,6 @@
 {
-    "name": "eliyce/laravel-media-pro",
-    "description": "Temporary uploads, upload routes, request handling and validation rules for the @eliyce/media-pro components on top of spatie/laravel-medialibrary.",
+    "name": "eliyce/laravel-medialibrary-freemium-app",
+    "description": "Temporary uploads, upload routes, request handling and validation rules for the @eliyce/laravel-medialibrary-freemium-app components on top of spatie/laravel-medialibrary.",
     "type": "library",
     "license": "MIT",
     "keywords": [

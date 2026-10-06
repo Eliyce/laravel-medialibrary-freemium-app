@@ -2,9 +2,9 @@
 
 ## Module Boundaries
 
-| File                   | Owns                                                             |
-| ---------------------- | ---------------------------------------------------------------- |
-| `styles/media-pro.css` | All component styles, exported as `@eliyce/media-pro/styles.css` |
+| File                   | Owns                                                                                     |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| `styles/media-pro.css` | All component styles, exported as `@eliyce/laravel-medialibrary-freemium-app/styles.css` |
 
 `package.json` exports `./styles.css` → `./styles/media-pro.css`, publishes `styles/` through
 `files`, and lists `**/*.css` in `sideEffects` so bundlers keep the CSS import.
