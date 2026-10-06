@@ -3,8 +3,14 @@
     "figma": {
       "enabled": true,
       "stack": "node-library",
-      "provides": ["design-specs", "components", "layouts"],
-      "replaces": ["web-search-design-research"]
+      "provides": [
+        "design-specs",
+        "components",
+        "layouts"
+      ],
+      "replaces": [
+        "web-search-design-research"
+      ]
     }
   },
   "resolved_artifacts": []
