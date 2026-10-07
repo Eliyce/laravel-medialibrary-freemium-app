@@ -113,7 +113,10 @@ npm installs it as a git dependency. `dist/` is not committed, so npm runs the p
 }
 ```
 
-The repository is private, so every machine that installs needs read access to it. Locally,
+A public repository needs no token: npm clones GitHub git dependencies over https first, and
+Composer reads the `vcs` repository anonymously.
+
+While the repository is private, every machine that installs needs read access to it. Locally,
 your git credentials cover npm; give Composer a token for the command, for example
 `COMPOSER_AUTH="{\"github-oauth\":{\"github.com\":\"$(gh auth token)\"}}" composer update`. In CI,
 use a token that can read this repository:
