@@ -1,0 +1,22 @@
+{
+  "id": "D-01M49RKXNJRS5ND0CVEG3Q0R39",
+  "category": "spec.change",
+  "title": "Switch release.yml to the changesets/action model",
+  "context": "Developer wants release.yml shaped like the paqad-ai release workflow: changesets/action opens a Version Packages PR and publishes when it is merged, with npm Trusted Publishing (OIDC). This replaces D-01M48MD0GJH2MF4C8W5MAKCY7F (version on main, no commit back). The repo is private, so npm provenance cannot be generated.",
+  "options": [
+    {
+      "option_key": "on-main",
+      "label": "Trigger on push to main (as in the example); the production branch is no longer used for releases"
+    },
+    {
+      "option_key": "on-production",
+      "label": "Trigger on push to production; the Version Packages PR targets production"
+    }
+  ],
+  "recommendation": "on-main",
+  "created_at": "2026-10-06T23:26:11.122Z",
+  "status": "resolved",
+  "chosen": "on-production",
+  "rationale": "Developer keeps production as the release branch; the Version Packages PR targets production",
+  "resolved_at": "2026-10-06T23:27:03.933Z"
+}

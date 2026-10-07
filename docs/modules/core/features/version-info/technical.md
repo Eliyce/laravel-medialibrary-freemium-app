@@ -34,13 +34,17 @@ bundled source file. That is the same file the tarball already ships.
 
 ## Release Steps
 
-1. On `main`, `npm run version-packages` (`changeset version`) bumps `package.json#version` and
-   writes `CHANGELOG.md`. Commit it.
-2. Merging `main` into `production` runs `.github/workflows/release.yml`. It publishes the
-   committed version with `npm publish`, whose `prepublishOnly` runs `npm run check` (which
-   rebuilds with the new version and runs the tests), then tags `vX.Y.Z` and creates the GitHub
-   release (AD-15). It refuses to release `0.0.0` or while changesets are pending.
-3. Manual fallback: `npm run release` runs `npm run check` and then `changeset publish`.
+1. Merging `main` into `production` runs `.github/workflows/release.yml`. With pending
+   changesets, changesets/action runs `npm run version-packages` (`changeset version`, then a
+   lockfile-only `npm install`), which bumps `package.json#version`, the `package-lock.json` root
+   version and `CHANGELOG.md`, and opens the `chore(release): version packages` PR into
+   `production` (AD-16).
+2. Merging that PR runs the workflow again. With no changesets pending it runs `npm run release`:
+   `npm run check` (which rebuilds with the new version and runs the tests), then
+   `changeset publish`, whose `npm publish` runs `prepublishOnly` (`npm run check` again) and
+   publishes through npm Trusted Publishing. The action then tags `vX.Y.Z` and creates the GitHub
+   release.
+3. Manual fallback: `npm run release` from `production` after `npm login`, then push the tag.
 
 No manual edit of `src/version.ts` is needed.
 

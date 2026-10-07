@@ -1,0 +1,22 @@
+{
+  "id": "D-01M49RKY46Y5B5THXWJCB4AAX4",
+  "category": "workflow-or-tool",
+  "title": "npm publish authentication",
+  "context": "npm Trusted Publishing (OIDC) is configured per package on npmjs.com, so the package normally has to exist there first. Provenance needs a public repo; this repo is private.",
+  "options": [
+    {
+      "option_key": "trusted-publishing",
+      "label": "Trusted Publishing (OIDC), no NPM_TOKEN; first 0.1.0 publish done once by hand with npm login"
+    },
+    {
+      "option_key": "npm-token",
+      "label": "NPM_TOKEN secret (granular token)"
+    }
+  ],
+  "recommendation": "trusted-publishing",
+  "created_at": "2026-10-06T23:26:11.590Z",
+  "status": "resolved",
+  "chosen": "trusted-publishing",
+  "rationale": "Developer chose npm Trusted Publishing (OIDC); first publish by hand; no provenance (private repo)",
+  "resolved_at": "2026-10-06T23:27:04.408Z"
+}

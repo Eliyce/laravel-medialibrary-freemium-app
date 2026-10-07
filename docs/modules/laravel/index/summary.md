@@ -63,8 +63,8 @@ to 8.4, after `composer validate --strict`. paqad's checks run only the npm comm
 - TD-19: CI runs only the latest 10.x release, so no job exercises the Laravel 10.x paths (the
   `ValidatesMedia` fallback below 10.43 and the pre-10.20 uuid-race detection); they are
   covered by local runs and simulation only.
-- Releases: Private Packagist reads the shared `vX.Y.Z` tag that the release workflow pushes,
-  so both packages share one version number (TD-17, confirmed; AD-15).
+- Releases: Private Packagist reads the shared `vX.Y.Z` tag that changesets/action creates in
+  the release workflow, so both packages share one version number (TD-17, confirmed; AD-16).
 
 ## Related Docs
 

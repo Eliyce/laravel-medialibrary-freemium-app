@@ -57,19 +57,25 @@ Consumers may import only the declared subpaths (`.`, `./core`, `./react`, `./st
 ## Release flow (both registries)
 
 ```text
-feature branch ── PR, CI ──▶ main ── npm run version-packages, commit, CI
-                                │
-                                └── merge ──▶ production ──▶ release.yml
-                                                               ├─ CI (calls ci.yml)
-                                                               ├─ npm publish     (skipped if on npm)
-                                                               ├─ tag vX.Y.Z      (skipped if present) ──webhook──▶ Private Packagist
-                                                               └─ GitHub release  (skipped if present)
+feature branch ── PR (with a changeset), CI ──▶ main
+                                                 │
+                                                 └── merge ──▶ production ──▶ release.yml
+                                                                               ├─ ci (calls ci.yml)
+                                                                               └─ changesets/action@v2
+    pending changesets: npm run version-packages ──▶ PR "chore(release): version packages" into production (CI runs on it)
+    PR merged, none pending: npm run release ──▶ npm (Trusted Publishing, OIDC)
+                                             ├─ tag vX.Y.Z ──webhook──▶ Private Packagist
+                                             └─ GitHub release from CHANGELOG.md
+    after the release: production ── merge by hand ──▶ main
 ```
 
-- The version is bumped only on `main` (`npm run version-packages`); `production` never commits
-  back (AD-15). npm and composer share the one `vX.Y.Z` tag and version number.
-- Each release step checks the remote state first, so a re-run completes a partial release
-  without duplicating anything. Existing tags are never moved.
+- The version is bumped only by `npm run version-packages`, which changesets/action runs on
+  `production` in the version PR (AD-16). The version commit lands on `production` only, so
+  `production` is merged back into `main` by hand after each release. npm and composer share the
+  one `vX.Y.Z` tag and version number.
+- `changeset publish` skips versions already on npm, so a re-run publishes nothing twice. The
+  workflow only updates the `changeset-release/production` branch and creates new tags; it never
+  pushes to `main` or `production` and never moves a tag.
 
 ## Modules
 
