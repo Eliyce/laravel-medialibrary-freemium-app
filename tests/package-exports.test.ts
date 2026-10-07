@@ -179,10 +179,15 @@ describe('built package', () => {
   });
 
   it('packs only the build, styles and docs, including the licence (AC-66, AC-71)', () => {
-    const output = execFileSync('npm', ['pack', '--dry-run', '--json', '--silent'], {
-      cwd: root,
-      encoding: 'utf8',
-    });
+    // --ignore-scripts: beforeAll already built, and `prepare` would print the build log into the JSON.
+    const output = execFileSync(
+      'npm',
+      ['pack', '--dry-run', '--json', '--silent', '--ignore-scripts'],
+      {
+        cwd: root,
+        encoding: 'utf8',
+      },
+    );
     const [report] = JSON.parse(output) as Array<{ files: Array<{ path: string }> }>;
     const files = report!.files.map((file) => file.path);
 
@@ -211,6 +216,10 @@ describe('built package', () => {
     });
     expect(manifest.files).toEqual(['dist', 'styles']);
     expect(manifest.sideEffects).toEqual(['**/*.css']);
+  });
+
+  it('builds dist/ when installed from git (AC-121)', () => {
+    expect(pkg.scripts.prepare).toBe('npm run build');
   });
 
   it('licenses both packages under MIT to Eliyce (AC-71)', () => {

@@ -84,6 +84,49 @@ in the stylesheet Tailwind processes:
 | `@eliyce/laravel-medialibrary-freemium-app/react`      | React components and the `useMediaLibrary` hook                  |
 | `@eliyce/laravel-medialibrary-freemium-app/styles.css` | Tailwind source styles (`media-library-*` classes)               |
 
+## Install from GitHub
+
+Both packages can be installed straight from this repository, without npm or Packagist. Pin a
+release tag (`vX.Y.Z`); the lock files then record the exact commit.
+
+Composer reads the repository as a `vcs` repository:
+
+```json
+{
+  "repositories": [
+    { "type": "vcs", "url": "https://github.com/Eliyce/laravel-medialibrary-freemium-app" }
+  ],
+  "require": {
+    "eliyce/laravel-medialibrary-freemium-app": "^0.1"
+  }
+}
+```
+
+npm installs it as a git dependency. `dist/` is not committed, so npm runs the package's
+`prepare` script, which builds it during the install:
+
+```json
+{
+  "dependencies": {
+    "@eliyce/laravel-medialibrary-freemium-app": "git+https://github.com/Eliyce/laravel-medialibrary-freemium-app.git#v0.1.0"
+  }
+}
+```
+
+The repository is private, so every machine that installs needs read access to it. Locally,
+your git credentials cover npm; give Composer a token for the command, for example
+`COMPOSER_AUTH="{\"github-oauth\":{\"github.com\":\"$(gh auth token)\"}}" composer update`. In CI,
+use a token that can read this repository:
+
+```bash
+composer config github-oauth.github.com "$GITHUB_READ_TOKEN"
+git config --global url."https://x-access-token:${GITHUB_READ_TOKEN}@github.com/".insteadOf "https://github.com/"
+git config --global --add url."https://x-access-token:${GITHUB_READ_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
+```
+
+The second rule is needed because npm records GitHub git dependencies as `git+ssh://` URLs in
+`package-lock.json`.
+
 ## React usage
 
 ### Attachment: one file
