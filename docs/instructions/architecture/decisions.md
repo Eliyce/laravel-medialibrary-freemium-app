@@ -43,7 +43,7 @@ Decision packets (`D-…`) are in `.paqad/decisions/resolved/`.
 ## AD-8: Two registries, one repo
 
 - **Decision:** `package.json` and `composer.json` both live at the repo root (D-01M3VMEVYRJDSVQWM1APMNBX13). PHP code lives in `laravel/` (PSR-4 `Eliyce\MediaPro\` → `laravel/src/`).
-- **Why:** Packagist requires `composer.json` at the root, and keeping both halves together lets one change update both sides of the HTTP contract. `files` (npm) and `.gitattributes` `export-ignore` (composer) keep each archive free of the other half.
+- **Why:** Packagist requires `composer.json` at the root, and keeping both halves together lets one change update both sides of the HTTP contract. `files` keeps the npm tarball free of PHP. `.gitattributes` `export-ignore` keeps tests, docs and tooling out of GitHub's archive, but ships the npm build inputs because npm git installs build from that archive.
 
 ## AD-9: Scoped package names
 

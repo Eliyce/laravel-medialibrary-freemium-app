@@ -51,8 +51,11 @@ owns one Spatie media row in collection `default`.
 - `require`: `php ^8.2`, `laravel/framework` and `illuminate/{cache,config,console,database,filesystem,http,log,routing,session,support,validation}`
   `^10.2|^11.0|^12.0|^13.0`, `spatie/laravel-medialibrary ^11.0`.
 - `require-dev`: `orchestra/testbench ^8.22|^9.0|^10.0|^11.0`, `phpunit/phpunit ^10.5|^11.0`.
-- `.gitattributes` export-ignores everything except `composer.json`, `laravel/src`,
-  `laravel/config`, `laravel/database`, `README.md` and `LICENSE` from the dist archive.
+- `.gitattributes` export-ignores tests, docs and dev tooling from GitHub's archive. It ships
+  `composer.json`, `laravel/src`, `laravel/config`, `laravel/database`, `README.md`, `LICENSE`,
+  and the npm build inputs (`package.json`, `package-lock.json`, `src/`, `styles/`,
+  `tsconfig.json`, `tsup.config.ts`), because npm installs a git dependency from that same
+  archive and builds `dist/` in `prepare`.
 
 ## Testing Entry Points
 

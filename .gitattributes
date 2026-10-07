@@ -1,6 +1,9 @@
-# The composer dist archive (eliyce/laravel-medialibrary-freemium-app) ships only composer.json,
-# laravel/src, laravel/config, laravel/database, README.md and LICENSE.
-# Everything below belongs to the npm package or to local development.
+# GitHub builds its download archives with `git archive`, so export-ignore decides what both
+# installs from this repository receive:
+# - Composer (vcs or dist) needs composer.json, laravel/src, laravel/config and laravel/database.
+# - npm installs a git dependency from the same archive and builds dist/ in its `prepare` script,
+#   so package.json, package-lock.json, src/, styles/, tsconfig.json and tsup.config.ts must ship.
+# Everything below is tests, docs or local tooling.
 
 /.changeset export-ignore
 /.claude export-ignore
@@ -10,8 +13,6 @@
 /docs export-ignore
 /dist export-ignore
 /node_modules export-ignore
-/src export-ignore
-/styles export-ignore
 /tests export-ignore
 /laravel/tests export-ignore
 /vendor export-ignore
@@ -26,13 +27,9 @@
 /AGENTS.md export-ignore
 /composer.lock export-ignore
 /eslint.config.js export-ignore
-/package.json export-ignore
-/package-lock.json export-ignore
 /phpunit.xml.dist export-ignore
 /postcss.config.* export-ignore
 /tailwind.config.* export-ignore
-/tsconfig.json export-ignore
 /tsconfig.*.json export-ignore
-/tsup.config.ts export-ignore
 /vite.config.* export-ignore
 /vitest.config.ts export-ignore

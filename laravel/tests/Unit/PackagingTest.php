@@ -42,7 +42,7 @@ class PackagingTest extends TestCase
         $this->assertSame(realpath(self::ROOT.'/laravel/src/MediaProServiceProvider.php'), realpath((string) $file));
     }
 
-    public function test_gitattributes_keeps_js_sources_tests_and_tooling_out_of_the_composer_archive(): void
+    public function test_gitattributes_ships_the_package_and_build_inputs_but_not_tests_or_tooling(): void
     {
         $lines = file(self::ROOT.'/.gitattributes', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
         $ignored = [];
@@ -54,15 +54,19 @@ class PackagingTest extends TestCase
         }
 
         foreach ([
-            '/src', '/tests', '/styles', '/node_modules', '/dist', '/docs', '/.paqad', '/.claude', '/.changeset',
-            '/laravel/tests', '/package.json', '/package-lock.json', '/tsconfig.json', '/tsup.config.ts',
-            '/vitest.config.ts', '/eslint.config.js', '/.prettierrc.json', '/phpunit.xml.dist',
+            '/tests', '/node_modules', '/dist', '/docs', '/.paqad', '/.claude', '/.changeset',
+            '/laravel/tests', '/vitest.config.ts', '/eslint.config.js', '/.prettierrc.json', '/phpunit.xml.dist',
         ] as $path) {
             $this->assertContains($path, $ignored, "{$path} must be export-ignored.");
         }
 
         foreach (['/composer.json', '/laravel/src', '/laravel/config', '/laravel/database', '/README.md', '/LICENSE'] as $shipped) {
             $this->assertNotContains($shipped, $ignored, "{$shipped} must ship in the composer archive.");
+        }
+
+        // npm installs a GitHub git dependency from the same archive and builds dist/ from these.
+        foreach (['/package.json', '/package-lock.json', '/src', '/styles', '/tsconfig.json', '/tsup.config.ts'] as $buildInput) {
+            $this->assertNotContains($buildInput, $ignored, "{$buildInput} must ship so npm can build a git install.");
         }
     }
 }

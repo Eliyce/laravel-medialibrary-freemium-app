@@ -111,7 +111,7 @@ run `composer test` alongside every `checks run` (TD-9).
 | `.changeset/config.json` | Public access, base branch `main`, `commit: false` (changesets/action commits the version PR)                         |
 | `composer.json`          | Package metadata, autoload, provider discovery, `scripts.test`                                                        |
 | `phpunit.xml.dist`       | Unit and Feature suites, sqlite `:memory:`, array cache/session, fails on warnings and risky tests                    |
-| `.gitattributes`         | `export-ignore` list for the composer archive                                                                         |
+| `.gitattributes`         | `export-ignore` list for GitHub's archive (Composer installs and npm git installs)                                    |
 | `.gitignore`             | Also ignores `vendor/`, `laravel/vendor/`, `.phpunit.cache/`                                                          |
 
 No PHP linter or formatter (Pint, PHPStan) is configured yet (TD-18).
