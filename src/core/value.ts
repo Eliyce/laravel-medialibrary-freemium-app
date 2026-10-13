@@ -16,10 +16,18 @@ export function createMap<T>(): Record<string, T> {
   return Object.create(null) as Record<string, T>;
 }
 
-/** Copies custom properties into a null-prototype object, dropping unsafe keys. */
+/**
+ * Copies custom properties into a null-prototype object, dropping unsafe keys. An empty array
+ * counts as empty: Spatie Media Library sends an empty PHP array as `[]`. A non-empty array is
+ * not a keyed map, so it throws.
+ */
 export function copyCustomProperties(source: unknown): Record<string, unknown> {
   const result = createMap<unknown>();
   if (source === undefined || source === null) return result;
+  if (Array.isArray(source)) {
+    if (source.length === 0) return result;
+    throw new TypeError('custom_properties must be an object (got a non-empty array)');
+  }
   if (!isRecord(source)) {
     throw new TypeError('custom_properties must be an object');
   }

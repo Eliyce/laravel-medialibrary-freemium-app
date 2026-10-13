@@ -73,6 +73,51 @@ describe('normalizeValue', () => {
     expect(({} as Record<string, unknown>).polluted).toBeUndefined();
   });
 
+  describe('custom_properties from a Spatie backend', () => {
+    // Spatie stores custom_properties as a PHP array, so an empty one arrives as [].
+    const fromServer = (json: string) => JSON.parse(json) as ValueItemInput[];
+
+    it('reads [] as no custom properties in a list (AC-125)', () => {
+      const value = normalizeValue(
+        fromServer(
+          '[{"uuid":"u-1","name":"One","custom_properties":[]},{"uuid":"u-2","name":"Two","custom_properties":[]}]',
+        ),
+      );
+      expect(Object.keys(value)).toEqual(['u-1', 'u-2']);
+      for (const item of Object.values(value)) {
+        expect(item.custom_properties).toEqual({});
+        expect(Object.getPrototypeOf(item.custom_properties)).toBeNull();
+      }
+    });
+
+    it('reads [] as no custom properties in a uuid-keyed value (AC-126)', () => {
+      const keyed = JSON.parse(
+        '{"u-1":{"uuid":"u-1","name":"One","order":0,"custom_properties":[]}}',
+      ) as MediaValue;
+      const properties = normalizeValue(keyed)['u-1']?.custom_properties;
+      expect(properties).toEqual({});
+      expect(Object.getPrototypeOf(properties)).toBeNull();
+    });
+
+    it('still defaults null and missing to {} and copies objects without unsafe keys (AC-127)', () => {
+      const value = normalizeValue(
+        fromServer(
+          '[{"uuid":"a","name":"A","custom_properties":null},{"uuid":"b","name":"B"},{"uuid":"c","name":"C","custom_properties":{"alt":"Cat","tags":["x"],"constructor":"c","prototype":"p"}}]',
+        ),
+      );
+      expect(value.a?.custom_properties).toEqual({});
+      expect(value.b?.custom_properties).toEqual({});
+      expect(value.c?.custom_properties).toEqual({ alt: 'Cat', tags: ['x'] });
+      expect(Object.getPrototypeOf(value.c?.custom_properties)).toBeNull();
+    });
+
+    it('rejects a non-empty array, naming it (AC-128)', () => {
+      expect(() =>
+        normalizeValue(fromServer('[{"uuid":"u","name":"n","custom_properties":["x"]}]')),
+      ).toThrow(new TypeError('custom_properties must be an object (got a non-empty array)'));
+    });
+  });
+
   it('drops an item whose uuid is a prototype key', () => {
     expect(normalizeValue([{ uuid: '__proto__', name: 'x' }])).toEqual({});
   });

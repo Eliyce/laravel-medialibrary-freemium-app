@@ -703,6 +703,17 @@ describe('properties and errors', () => {
     expect(() => library.setCustomProperty(object, '', 'x')).toThrow(TypeError);
   });
 
+  it('builds from Spatie media whose custom_properties is [] (AC-129)', () => {
+    const fromServer = JSON.parse(
+      '[{"uuid":"u","name":"Cat","custom_properties":[]}]',
+    ) as ValueItemInput[];
+    const { library } = create({ initialValue: fromServer });
+    expect(library.getValue().u?.custom_properties).toEqual({});
+
+    library.setCustomProperty(media(library), 'alt', 'A cat');
+    expect(library.getValue().u?.custom_properties).toEqual({ alt: 'A cat' });
+  });
+
   it.each(['__proto__', 'constructor', 'prototype'])(
     'rejects the custom-property key %s (AC-22)',
     (key) => {

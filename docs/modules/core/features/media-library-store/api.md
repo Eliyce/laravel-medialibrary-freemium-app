@@ -96,8 +96,11 @@ normalizeValue(value: MediaValue | ValueItemInput[] | null | undefined): MediaVa
 
 Accepts a uuid-keyed object or a list. It sorts by `order` (ties keep input order), rewrites
 `order` zero-based, defaults `custom_properties` to `{}`, drops unsafe custom-property keys and
-items with an unsafe uuid. Every user-keyed map has a null prototype. Throws `TypeError` for a
-non-object item, a missing or empty `uuid`, or a non-string `name`.
+items with an unsafe uuid. Every user-keyed map has a null prototype. `custom_properties` may be
+missing, `null` or an empty array: Spatie Media Library serializes an empty PHP array as `[]`, and
+Inertia props keep it that way, so all three become `{}`. Throws `TypeError` for a non-object
+item, a missing or empty `uuid`, a non-string `name`, or `custom_properties` that is a non-empty
+array or another non-object.
 
 ## Types
 

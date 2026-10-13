@@ -69,6 +69,20 @@ describe('MediaLibraryAttachment', () => {
     expect(screen.getByRole('alert').textContent).toContain('Required');
   });
 
+  it('renders existing Spatie media whose custom_properties is [] (AC-130)', () => {
+    // An empty PHP array reaches the client as [], also through Inertia props.
+    const fromServer = JSON.parse(
+      `[{"uuid":"${U}","name":"Me","file_name":"me.png","extension":"png","size":2048,"custom_properties":[]}]`,
+    ) as typeof avatar;
+
+    const { container } = render(
+      <MediaLibraryAttachment name="avatar" initialValue={fromServer} />,
+    );
+
+    expect(within(item()).getByText('Me')).toBeTruthy();
+    expect(hiddenUuidInputs(container, 'avatar').map((input) => input.value)).toEqual([U]);
+  });
+
   it('replaces the single item when another file is picked (AC-30)', async () => {
     const user = userEvent.setup();
     const transport = createAutoTransport();
