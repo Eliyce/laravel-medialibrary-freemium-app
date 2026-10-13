@@ -188,7 +188,13 @@ describe('built package', () => {
         encoding: 'utf8',
       },
     );
-    const [report] = JSON.parse(output) as Array<{ files: Array<{ path: string }> }>;
+    // npm 10 (CI on Node 20 and 22) runs `prepare` anyway and prints the build log before the
+    // report, so read from the report's opening bracket.
+    const reportStart = output.search(/^\[$/m);
+    expect(reportStart, output).toBeGreaterThanOrEqual(0);
+    const [report] = JSON.parse(output.slice(reportStart)) as Array<{
+      files: Array<{ path: string }>;
+    }>;
     const files = report!.files.map((file) => file.path);
 
     expect(files).toEqual(
