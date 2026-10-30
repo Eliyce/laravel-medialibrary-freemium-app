@@ -178,6 +178,7 @@ describe('built package', () => {
     }
   });
 
+  // npm 10 rebuilds during pack (see below), which can outlast vitest's 5s default on a slow CI runner.
   it('packs only the build, styles and docs, including the licence (AC-66, AC-71)', () => {
     // --ignore-scripts: beforeAll already built, and `prepare` would print the build log into the JSON.
     const output = execFileSync(
@@ -210,7 +211,7 @@ describe('built package', () => {
     }
     expect(files.filter((file) => /^(laravel|src|tests|\.paqad)\//.test(file))).toEqual([]);
     expect(files).not.toContain('composer.json');
-  });
+  }, 60_000);
 
   it('declares no runtime dependencies and optional react peers (AC-66)', () => {
     const manifest = pkg as typeof pkg & { dependencies?: Record<string, string> };
